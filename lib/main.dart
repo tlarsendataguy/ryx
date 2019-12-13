@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'sidebar.dart';
 
 void main() => runApp(MyApp());
 
@@ -30,39 +31,54 @@ class SelectProject extends StatelessWidget {
   }
 }
 
-class PageStructure extends StatelessWidget {
-  PageStructure({Key key, this.topBar, this.leftBar, this.rightBar, this.content}) : super(key: key);
+class PageStructure extends StatefulWidget {
+  PageStructure(
+      {Key key, this.topBar, this.leftBar, this.rightBar, this.content})
+      : super(key: key);
 
   final Widget topBar;
   final Widget leftBar;
   final Widget rightBar;
   final Widget content;
 
+  State<StatefulWidget> createState() => _PageStructureState();
+}
+
+class _PageStructureState extends State<PageStructure> {
+
+  var leftVisible = true;
+  var rightVisible = true;
+  static const minimizeWidth = 8.0;
+  var cardColor = Colors.grey[200];
+  var topBarColor = Colors.blue[100];
+
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Card(
-          color: Colors.blue[100],
-          child: topBar,
+          color: topBarColor,
+          child: widget.topBar,
         ),
         Expanded(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Card(
-                child: leftBar,
-                color: Colors.grey[200],
+              SideBar(
+                child: widget.leftBar,
+                color: cardColor,
+                position: SideBarPosition.Left,
               ),
               Expanded(
                 child: Card(
-                  child: content,
-                  color: Colors.grey[200],
+                  child: widget.content,
+                  color: cardColor,
                 ),
               ),
-              Card(
-                child: rightBar,
-                color: Colors.grey[200],
+              SideBar(
+                child: widget.rightBar,
+                color: cardColor,
+                position: SideBarPosition.Right,
               ),
             ],
           ),
