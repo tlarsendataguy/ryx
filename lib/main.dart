@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ryx_gui/layouter.dart';
 import 'sidebar.dart';
 
 void main() => runApp(MyApp());
@@ -46,13 +47,22 @@ class PageStructure extends StatefulWidget {
 
 class _PageStructureState extends State<PageStructure> {
 
+  static const minSidebarWidth = 20.0;
   var leftVisible = true;
   var rightVisible = true;
-  static const minimizeWidth = 8.0;
   var cardColor = Colors.grey[200];
   var topBarColor = Colors.blue[100];
+  var layouter = new Layouter(
+    getWidth: () => 0,
+    minContentWidth: 100,
+    minSidebarWidth: minSidebarWidth,
+    leftWidth: 112,
+    rightWidth: 112,
+  );
 
   Widget build(BuildContext context) {
+    layouter = layouter.copy(()=>context.size.width);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -68,6 +78,10 @@ class _PageStructureState extends State<PageStructure> {
                 child: widget.leftBar,
                 color: cardColor,
                 position: SideBarPosition.Left,
+                tryWidth: layouter.tryLeftWidth,
+                tryUnhide: layouter.unhideLeft,
+                minWidth: minSidebarWidth,
+                onHide: layouter.hideLeft,
               ),
               Expanded(
                 child: Card(
@@ -79,6 +93,10 @@ class _PageStructureState extends State<PageStructure> {
                 child: widget.rightBar,
                 color: cardColor,
                 position: SideBarPosition.Right,
+                tryWidth: layouter.tryRightWidth,
+                tryUnhide: layouter.unhideRight,
+                minWidth: minSidebarWidth,
+                onHide: layouter.hideRight,
               ),
             ],
           ),
