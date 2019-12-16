@@ -8,11 +8,19 @@ class Response<T> {
   final String error;
 }
 
-abstract class Io{
-  String browseFolder(String root);
+class ProjectStructure {
+  ProjectStructure({this.path, this.folders, this.docs});
+  final String path;
+  final List<ProjectStructure> folders;
+  final List<String> docs;
 }
 
-typedef T BuildData<T>(Map<String, dynamic> json);
+abstract class Io{
+  String browseFolder(String root);
+  String getProjectStructure(String project);
+}
+
+typedef T BuildData<T>(dynamic data);
 
 class Communicator{
   Communicator(Io io){
@@ -29,6 +37,14 @@ class Communicator{
     }
   }
 
+  Response<ProjectStructure> getProjectStructure(String project) {
+    try {
+      return _buildResponse<ProjectStructure>(_io.getProjectStructure(project), _buildProjectStructure);
+    } catch (ex) {
+      return _parseError();
+    }
+  }
+
   Response<T> _buildResponse<T>(String response, BuildData<T> buildData) {
     var json = jsonDecode(response);
     var success = json['Success'] as bool;
@@ -37,16 +53,30 @@ class Communicator{
       error = json['Data'] as String;
       return Response<T>(null, success, error);
     }
-    return Response<T>(buildData(json), true, '');
+    return Response<T>(buildData(json['Data']), true, '');
   }
 
-  List<String> _buildBrowseFolder(Map<String, dynamic> json){
-    List<dynamic> paths = json['Data'];
-    var data = List<String>();
-    for (var path in paths) {
-      data.add(path as String);
+  List<String> _buildBrowseFolder(dynamic data){
+    data = data as List<dynamic>;
+    var paths = List<String>();
+    for (var path in data) {
+      paths.add(path as String);
     }
-    return data;
+    return paths;
+  }
+
+  ProjectStructure _buildProjectStructure(dynamic data){
+    data = data as Map<String, dynamic>;
+    var path = data['Path'] as String;
+    var folders = List<ProjectStructure>();
+    for (var folder in data['Folders']){
+      folders.add(_buildProjectStructure(folder));
+    }
+    var docs = List<String>();
+    for (var doc in data['Docs']){
+      docs.add(doc as String);
+    }
+    return ProjectStructure(path: path, folders: folders, docs: docs);
   }
 
   Response<T> _parseError<T>(){
