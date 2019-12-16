@@ -1,23 +1,10 @@
 import 'dart:convert';
-
-class Response<T> {
-  Response(this.value, this.success, this.error);
-
-  final T value;
-  final bool success;
-  final String error;
-}
-
-class ProjectStructure {
-  ProjectStructure({this.path, this.folders, this.docs});
-  final String path;
-  final List<ProjectStructure> folders;
-  final List<String> docs;
-}
+import 'communicator_data.dart';
 
 abstract class Io{
   String browseFolder(String root);
   String getProjectStructure(String project);
+  String getDocumentStructure(String project, String document);
 }
 
 typedef T BuildData<T>(dynamic data);
@@ -40,6 +27,14 @@ class Communicator{
   Response<ProjectStructure> getProjectStructure(String project) {
     try {
       return _buildResponse<ProjectStructure>(_io.getProjectStructure(project), _buildProjectStructure);
+    } catch (ex) {
+      return _parseError();
+    }
+  }
+
+  Response<DocumentStructure> getDocumentStructure(String project, String document){
+    try {
+      return _buildResponse<DocumentStructure>(_io.getDocumentStructure(project, document), _buildDocumentStructure);
     } catch (ex) {
       return _parseError();
     }
@@ -77,6 +72,27 @@ class Communicator{
       docs.add(doc as String);
     }
     return ProjectStructure(path: path, folders: folders, docs: docs);
+  }
+
+  DocumentStructure _buildDocumentStructure(dynamic data) {
+    data = data as Map<String, dynamic>;
+    var nodes = List<Node>();
+    for (var node in (data['Nodes'] as List<dynamic>)) {
+      node = node as Map<String, dynamic>;
+      var toolId = node['ToolId'] as int;
+      var x = node['X'] as int;
+      var y = node['Y'] as int;
+      var width = double.parse(node['Width'].toString());
+      var height = double.parse(node['Height'].toString());
+      var plugin = node['Plugin'] as String;
+      var storedMacro = node['StoredMacro'] as String;
+      var foundMacro = node['FoundMacro'] as String;
+      var category = node['Category'] as String;
+      nodes.add(Node(toolId: toolId, x: x, y: y, width: width, height: height, plugin: plugin, storedMacro: storedMacro, foundMacro: foundMacro, category: category));
+    }
+
+    var conns = List<Conn>();
+    return DocumentStructure(nodes: nodes, conns: conns);
   }
 
   Response<T> _parseError<T>(){
