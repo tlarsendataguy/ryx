@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'communicator_data.dart';
 
 abstract class Io{
-  String browseFolder(String root);
-  String getProjectStructure(String project);
-  String getDocumentStructure(String project, String document);
+  Future<String> browseFolder(String root);
+  Future<String> getProjectStructure(String project);
+  Future<String> getDocumentStructure(String project, String document);
 }
 
 typedef T BuildData<T>(dynamic data);
@@ -16,25 +16,25 @@ class Communicator{
 
   Io _io;
 
-  Response<List<String>> browseFolder(String root) {
+  Future<Response<List<String>>> browseFolder(String root) async {
     try {
-      return _buildResponse<List<String>>(_io.browseFolder(root), _buildBrowseFolder);
+      return _buildResponse<List<String>>(await _io.browseFolder(root), _buildBrowseFolder);
     } catch (ex) {
       return _parseError();
     }
   }
 
-  Response<ProjectStructure> getProjectStructure(String project) {
+  Future<Response<ProjectStructure>> getProjectStructure(String project) async {
     try {
-      return _buildResponse<ProjectStructure>(_io.getProjectStructure(project), _buildProjectStructure);
+      return _buildResponse<ProjectStructure>(await _io.getProjectStructure(project), _buildProjectStructure);
     } catch (ex) {
       return _parseError();
     }
   }
 
-  Response<DocumentStructure> getDocumentStructure(String project, String document){
+  Future<Response<DocumentStructure>> getDocumentStructure(String project, String document) async {
     try {
-      return _buildResponse<DocumentStructure>(_io.getDocumentStructure(project, document), _buildDocumentStructure);
+      return _buildResponse<DocumentStructure>(await _io.getDocumentStructure(project, document), _buildDocumentStructure);
     } catch (ex) {
       return _parseError();
     }
@@ -51,7 +51,7 @@ class Communicator{
     return Response<T>(buildData(json['Data']), true, '');
   }
 
-  List<String> _buildBrowseFolder(dynamic data){
+  List<String> _buildBrowseFolder(dynamic data) {
     data = data as List<dynamic>;
     var paths = List<String>();
     for (var path in data) {
@@ -60,7 +60,7 @@ class Communicator{
     return paths;
   }
 
-  ProjectStructure _buildProjectStructure(dynamic data){
+  ProjectStructure _buildProjectStructure(dynamic data) {
     data = data as Map<String, dynamic>;
     var path = data['Path'] as String;
     var folders = List<ProjectStructure>();
@@ -92,6 +92,15 @@ class Communicator{
     }
 
     var conns = List<Conn>();
+    for (var conn in (data['Connections'] as List<dynamic>)) {
+      conn = conn as Map<String, dynamic>;
+      var name = conn['Name'] as String;
+      var fromId = conn['FromId'] as int;
+      var toId = conn['ToId'] as int;
+      var fromAnchor = conn['FromAnchor'] as String;
+      var toAnchor = conn['ToAnchor'] as String;
+      conns.add(Conn(name: name, fromId: fromId, fromAnchor: fromAnchor, toId: toId, toAnchor: toAnchor));
+    }
     return DocumentStructure(nodes: nodes, conns: conns);
   }
 

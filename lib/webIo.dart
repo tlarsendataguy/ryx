@@ -1,0 +1,45 @@
+import 'dart:convert';
+import 'package:ryx_gui/communicator.dart';
+import 'dart:html' as html;
+import 'package:http/http.dart' as http;
+
+class Request {
+  Request({this.Function, this.Project = "", this.Parameters});
+  final String Function;
+  final String Project;
+  final Map<String, String> Parameters;
+}
+
+class WebIo extends Io {
+  WebIo(){
+    _address = html.window.location.href;
+  }
+
+  String _address;
+
+  Future<String> browseFolder(String root) async {
+    return await _request(function: "BrowseFolder", parameters: {"FolderPath": root});
+  }
+
+  Future<String> getDocumentStructure(String project, String document) async {
+    return await _request(function: "GetDocumentStructure", project: project, parameters: {"FilePath": document});
+  }
+
+  Future<String> getProjectStructure(String project) async {
+    return await _request(function: "GetProjectStructure", project: project);
+  }
+
+  Future<String> _request({String function, String project="", Map<String,String> parameters}) async {
+    if (parameters == null){
+      parameters = Map<String,String>();
+    }
+    try{
+      var request = Request(Function: "BrowseFolder", Project: project, Parameters: parameters);
+      var encoded = jsonEncode(request);
+      var response = await http.post(_address, headers: {"Content-type":"application/json"}, body:encoded);
+      return response.body;
+    } catch (ex){
+      return '{"Success":false,"Data":"Error connecting to web service"}';
+    }
+  }
+}
