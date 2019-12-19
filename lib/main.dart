@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:ryx_gui/app_state.dart';
+import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/layouter.dart';
+import 'package:ryx_gui/web_io.dart';
 import 'sidebar.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(
+    BlocProvider<AppState>(
+      child: MyApp(),
+      bloc: AppState(WebIo()),
+    ),
+);
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,21 +21,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Material(
-        child: SelectProject(),
+        child: PageStructure(
+          topBar: Text("Top bar stuff"),
+          leftBar: Text("Left stuff"),
+          rightBar: Text("Right stuff"),
+          content: Text("Content stuff"),
+        ),
       ),
-    );
-  }
-}
-
-class SelectProject extends StatelessWidget {
-  SelectProject({Key key}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return PageStructure(
-      topBar: Text("Top bar stuff"),
-      leftBar: Text("Left stuff"),
-      rightBar: Text("Right stuff"),
-      content: Text("Content stuff"),
     );
   }
 }
