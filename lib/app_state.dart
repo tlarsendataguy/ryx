@@ -9,7 +9,7 @@ class AppState extends BlocState{
 
   Communicator _communicator;
 
-  var _folders = BehaviorSubject<List<String>>.seeded([]);
+  var _folders = BehaviorSubject<List<String>>.seeded(null);
   Stream<List<String>> get folders => _folders.stream;
 
   var _currentFolder = BehaviorSubject<String>.seeded("");
@@ -22,6 +22,11 @@ class AppState extends BlocState{
       _folders.add(response.value);
     }
     return response.error;
+  }
+
+  void clearFolder() async {
+    _currentFolder.add("");
+    _folders.add(null);
   }
 
   Future initialize() async {

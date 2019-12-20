@@ -57,7 +57,7 @@ class Communicator{
     for (var path in data) {
       paths.add(path as String);
     }
-    return paths;
+    return paths..sort();
   }
 
   ProjectStructure _buildProjectStructure(dynamic data) {

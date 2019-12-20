@@ -2,7 +2,7 @@ import 'package:ryx_gui/communicator.dart';
 
 class MockSuccessIo extends Io {
   Future<String> browseFolder(String root) async {
-    return '{"Success":true,"Data":["C:\\\\","D:\\\\"]}';
+    return '{"Success":true,"Data":["D:\\\\","C:\\\\"]}';
   }
   Future<String> getProjectStructure(String project) async {
     return '{"Success":true,"Data":{"Path":"C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing","Folders":[{"Path":"C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\macros","Folders":[],"Docs":["C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\macros\\\\Tag with Sets.yxmc"]}],"Docs":["C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\01 SETLEAF Equations Completed.yxmd","C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\Calculate Filter Expression.yxmc","C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\new.yxmc"]}}';
