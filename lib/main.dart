@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/layouter.dart';
+import 'package:ryx_gui/top_bar.dart';
 import 'package:ryx_gui/web_io.dart';
 import 'sidebar.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Material(
         child: PageStructure(
-          topBar: Text("Top bar stuff"),
+          topBar: TopBar(),
           leftBar: Text("Left stuff"),
           rightBar: Text("Right stuff"),
           content: Text("Content stuff"),

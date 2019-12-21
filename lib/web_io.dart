@@ -1,14 +1,7 @@
-import 'dart:convert';
 import 'package:ryx_gui/communicator.dart';
 import 'dart:html' as html;
 import 'package:http/http.dart' as http;
-
-class Request {
-  Request({this.Function, this.Project = "", this.Parameters});
-  final String Function;
-  final String Project;
-  final Map<String, String> Parameters;
-}
+import 'package:ryx_gui/request.dart';
 
 class WebIo extends Io {
   WebIo(){
@@ -34,8 +27,8 @@ class WebIo extends Io {
       parameters = Map<String,String>();
     }
     try{
-      var request = Request(Function: "BrowseFolder", Project: project, Parameters: parameters);
-      var encoded = jsonEncode(request);
+      var request = Request(function: "BrowseFolder", project: project, parameters: parameters);
+      var encoded = request.toJson();
       var response = await http.post(_address, headers: {"Content-type":"application/json"}, body:encoded);
       return response.body;
     } catch (ex){

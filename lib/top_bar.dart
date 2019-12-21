@@ -23,37 +23,49 @@ class TopBar extends StatelessWidget {
 class SelectProjectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     var state = BlocProvider.of<AppState>(context);
-    return Column(
-      children: <Widget>[
-        StreamBuilder(
-          stream: state.currentFolder,
-          builder: (context, AsyncSnapshot<String> snapshot){
-            if (snapshot.hasData){
-              return Text(snapshot.data);
-            }
-            return const Text("");
-          },
-        ),
-        StreamBuilder(
-          stream: state.folders,
-          builder: (context, AsyncSnapshot<List<String>> snapshot){
-            if (snapshot.hasData){
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index){
-                  var path = snapshot.data[index];
-                  var name = path.split("\\").last;
-                  return InkWell(
-                    onDoubleTap: ()=>state.browseFolder(path),
-                    child: Text(name),
+    return Dialog(
+      child: Column(
+        children: <Widget>[
+          StreamBuilder(
+            stream: state.currentFolder,
+            builder: (context, AsyncSnapshot<String> snapshot){
+              if (snapshot.hasData){
+                return Text(snapshot.data);
+              }
+              return const Text("");
+            },
+          ),
+          Expanded(
+            child: StreamBuilder(
+              stream: state.folders,
+              builder: (context, AsyncSnapshot<List<String>> snapshot){
+                if (snapshot.hasData){
+                  return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index){
+                      var path = snapshot.data[index];
+                      var name = path.split("\\").last;
+                      if (name == ''){
+                        name = path;
+                      }
+                      return InkWell(
+                        onDoubleTap: () async {
+                          var error = await state.browseFolder(path);
+                          if (error != ""){
+                            print(error);
+                          }
+                        },
+                        child: Text(name),
+                      );
+                    },
                   );
-                },
-              );
-            }
-            return ListView();
-          },
-        ),
-      ],
+                }
+                return ListView(children: <Widget>[]);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
