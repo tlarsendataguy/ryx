@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'app_state.dart';
+import 'split_path.dart';
 
 class TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -9,10 +10,14 @@ class TopBar extends StatelessWidget {
       children: <Widget>[
         RaisedButton(
           child: Text("Open Project"),
-          onPressed: (){
+          onPressed: () async {
             state.clearFolder();
-            state.browseFolder("");
+            var future = state.browseFolder("");
             showDialog(context: context, child: SelectProjectDialog());
+            var error = await future;
+            if (error != ''){
+              print(error);
+            }
           },
         ),
       ],
@@ -29,10 +34,30 @@ class SelectProjectDialog extends StatelessWidget {
           StreamBuilder(
             stream: state.currentFolder,
             builder: (context, AsyncSnapshot<String> snapshot){
+              var currentFolder = "";
               if (snapshot.hasData){
-                return Text(snapshot.data);
+                currentFolder = snapshot.data;
               }
-              return const Text("");
+
+              var folders = splitPath(currentFolder);
+              return Container(
+                height: 30,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: folders.length,
+                  itemBuilder: (context, index){
+                    return RaisedButton(
+                      child: Text(folders[index].name),
+                      onPressed: () async {
+                        var error = await state.browseFolder(folders[index].path);
+                        if (error != ""){
+                          print(error);
+                        }
+                      },
+                    );
+                  },
+                ),
+              );
             },
           ),
           Expanded(
