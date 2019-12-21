@@ -27,7 +27,7 @@ class WebIo extends Io {
       parameters = Map<String,String>();
     }
     try{
-      var request = Request(function: "BrowseFolder", project: project, parameters: parameters);
+      var request = Request(function: function, project: project, parameters: parameters);
       var encoded = request.toJson();
       var response = await http.post(_address, headers: {"Content-type":"application/json"}, body:encoded);
       return response.body;

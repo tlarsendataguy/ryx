@@ -4,6 +4,7 @@ import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/layouter.dart';
 import 'package:ryx_gui/top_bar.dart';
 import 'package:ryx_gui/web_io.dart';
+import 'formats.dart';
 import 'sidebar.dart';
 
 void main() => runApp(
@@ -51,8 +52,6 @@ class _PageStructureState extends State<PageStructure> {
   static const minSidebarWidth = 20.0;
   var leftVisible = true;
   var rightVisible = true;
-  var cardColor = Colors.grey[200];
-  var topBarColor = Colors.blue[100];
   var layouter = new Layouter(
     getWidth: () => 0,
     minContentWidth: 100,

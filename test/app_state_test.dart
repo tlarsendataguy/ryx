@@ -29,4 +29,20 @@ main(){
     await state.browseFolder("C:\\");
     state.clearFolder();
   });
+
+  test("Get project structure", () async {
+    var state = AppState(MockSuccessIo());
+    expect(state.projectStructure, emitsInOrder([isNull, isNotNull]));
+    expect(state.currentProject, emitsInOrder([equals(""), equals("Blah")]));
+
+    var error = await state.getProjectStructure("Blah");
+    expect(error, equals(""));
+  });
+
+  test("Get project structure error", () async {
+    var state = AppState(MockInvalidIo());
+    expect(state.currentProject, emits(""));
+    var error = await state.getProjectStructure("Blah");
+    expect(error, isNot(equals("")));
+  });
 }
