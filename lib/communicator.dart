@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'communicator_data.dart';
+import 'package:ryx_gui/communicator_data.dart';
 
 abstract class Io{
   Future<String> browseFolder(String root);

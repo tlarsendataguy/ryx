@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/split_path.dart';
-import 'app_state.dart';
-import 'bloc_provider.dart';
-import 'formats.dart';
+import 'package:ryx_gui/app_state.dart';
+import 'package:ryx_gui/bloc_provider.dart';
+import 'package:ryx_gui/error_dialog.dart';
+import 'package:ryx_gui/formats.dart';
 
 class SelectProjectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -60,6 +61,7 @@ class CurrentPathStrip extends StatelessWidget {
                 onPressed: () async {
                   var error = await state.browseFolder(folders[index].path);
                   if (error != ""){
+                    showDialog(context: context, builder: (context)=>ErrorDialog(error));
                     print(error);
                   }
                 },
@@ -94,6 +96,7 @@ class FolderSelector extends StatelessWidget {
                 onTap: () async {
                   var error = await state.browseFolder(path);
                   if (error != ""){
+                    showDialog(context: context, builder: (context)=>ErrorDialog(error));
                     print(error);
                   }
                 },
@@ -137,8 +140,4 @@ class ButtonsRow extends StatelessWidget {
       ],
     );
   }
-}
-
-void selectCurrentFolder(){
-
 }

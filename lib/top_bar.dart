@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/select_project_dialog.dart';
-import 'app_state.dart';
+import 'package:ryx_gui/app_state.dart';
 
 class TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -12,12 +12,8 @@ class TopBar extends StatelessWidget {
           child: Text("Open Project"),
           onPressed: () async {
             state.clearFolder();
-            var future = state.browseFolder("");
-            showDialog(context: context, child: SelectProjectDialog());
-            var error = await future;
-            if (error != ''){
-              print(error);
-            }
+            state.browseFolder("");
+            showDialog(context: context, builder: (context) => SelectProjectDialog());
           },
         ),
         StreamBuilder(

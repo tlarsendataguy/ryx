@@ -4,8 +4,10 @@ import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/layouter.dart';
 import 'package:ryx_gui/top_bar.dart';
 import 'package:ryx_gui/web_io.dart';
-import 'formats.dart';
-import 'sidebar.dart';
+import 'package:ryx_gui/formats.dart';
+import 'package:ryx_gui/left_bar.dart';
+import 'package:ryx_gui/sidebar.dart';
+//import 'mock_io.dart';
 
 void main() => runApp(
     BlocProvider<AppState>(
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
       home: Material(
         child: PageStructure(
           topBar: TopBar(),
-          leftBar: Text("Left stuff"),
+          leftBar: LeftBar(),
           rightBar: Text("Right stuff"),
           content: Text("Content stuff"),
         ),
