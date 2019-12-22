@@ -1,6 +1,6 @@
 import 'package:ryx_gui/communicator.dart';
 import 'package:ryx_gui/communicator_data.dart';
-import 'bloc_state.dart';
+import 'package:ryx_gui/bloc_state.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AppState extends BlocState{
