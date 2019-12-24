@@ -25,6 +25,10 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
   bool expanded;
 
   Widget build(BuildContext context) {
+    if (widget.structure == null){
+      return Container();
+    }
+
     var label = widget.structure.path.split("\\").last;
     var widgets = <Widget>[
       InkWell(

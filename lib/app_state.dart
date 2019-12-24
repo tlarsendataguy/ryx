@@ -2,6 +2,7 @@ import 'package:ryx_gui/communicator.dart';
 import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/bloc_state.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:ryx_gui/tool_data.dart';
 
 class AppState extends BlocState{
   AppState(Io io){
@@ -9,6 +10,10 @@ class AppState extends BlocState{
   }
 
   Communicator _communicator;
+
+  var _toolData = BehaviorSubject<Map<String,ToolData>>.seeded(null);
+  Stream<Map<String,ToolData>> get toolData => _toolData.stream;
+  Map<String,ToolData> get currentTools => _toolData.value;
 
   var _folders = BehaviorSubject<List<String>>.seeded(null);
   Stream<List<String>> get folders => _folders.stream;
@@ -22,6 +27,12 @@ class AppState extends BlocState{
   var _projectStructure = BehaviorSubject<ProjectStructure>.seeded(null);
   Stream<ProjectStructure> get projectStructure => _projectStructure.stream;
 
+  var _currentDocument = BehaviorSubject<String>.seeded("");
+  Stream<String> get currentDocument => _currentDocument.stream;
+
+  var _documentStructure = BehaviorSubject<DocumentStructure>.seeded(null);
+  Stream<DocumentStructure> get documentStructure => _documentStructure.stream;
+
   Future<String> browseFolder(String root) async {
     var response = await _communicator.browseFolder(root);
     if (response.success){
@@ -32,10 +43,25 @@ class AppState extends BlocState{
   }
 
   Future<String> getProjectStructure(String project) async {
-    var response = await _communicator.getProjectStructure(project);
-    if (response.success){
-      _projectStructure.add(response.value);
+    var toolDataResponse = await _communicator.getToolData();
+    if (!toolDataResponse.success){
+      return toolDataResponse.error;
+    }
+    _toolData.add(toolDataResponse.value);
+
+    var structureResponse = await _communicator.getProjectStructure(project);
+    if (structureResponse.success){
+      _projectStructure.add(structureResponse.value);
       _currentProject.add(project);
+    }
+    return structureResponse.error;
+  }
+
+  Future<String> getDocumentStructure(String project, String document) async {
+    var response = await _communicator.getDocumentStructure(project, document);
+    if (response.success){
+      _documentStructure.add(response.value);
+      _currentDocument.add(document);
     }
     return response.error;
   }
@@ -54,5 +80,8 @@ class AppState extends BlocState{
     _currentFolder.close();
     _currentProject.close();
     _projectStructure.close();
+    _currentDocument.close();
+    _documentStructure.close();
+    _toolData.close();
   }
 }

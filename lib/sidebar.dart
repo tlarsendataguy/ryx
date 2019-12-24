@@ -33,9 +33,9 @@ class _SideBarState extends State<SideBar> {
   static const resizeWidth = 4.0;
   Widget hideButton;
   Widget resizeButton;
-  var width = 100.0;
+  var width = 300.0;
   Offset dragStart;
-  var dragStartWidth = 100.0;
+  var dragStartWidth = 300.0;
 
   void initState() {
     hideButton = InkWell(

@@ -8,19 +8,37 @@ class TopBar extends StatelessWidget {
     var state = BlocProvider.of<AppState>(context);
     return Row(
       children: <Widget>[
-        RaisedButton(
-          child: Text("Open Project"),
-          onPressed: () async {
-            state.clearFolder();
-            state.browseFolder("");
-            showDialog(context: context, builder: (context) => SelectProjectDialog());
-          },
+        Padding(
+          padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+          child: RaisedButton(
+            child: Text("Open Project"),
+            onPressed: () async {
+              state.clearFolder();
+              state.browseFolder("");
+              showDialog(context: context, builder: (context) => SelectProjectDialog());
+            },
+          ),
         ),
         StreamBuilder(
           stream: state.currentProject,
           builder: (context, AsyncSnapshot<String> snapshot){
-            if (snapshot.hasData){
-              return Center(child: Text(snapshot.data));
+            if (snapshot.hasData && snapshot.data != ''){
+              return Row(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(8,0,8,0),
+                    child: Center(
+                      child: Text(
+                        snapshot.data,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: null,
+                  ),
+                ],
+              );
             }
             return Text("");
           },

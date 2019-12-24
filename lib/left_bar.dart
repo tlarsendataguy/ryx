@@ -10,16 +10,37 @@ class LeftBar extends StatelessWidget {
     return StreamBuilder(
       stream: state.projectStructure,
       builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
-        if (!snapshot.hasData){
-          return Container();
-        }
-
-        var structure = ProjectExplorer(structure: snapshot.data, expanded: true);
-        return SingleChildScrollView(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: structure,
-          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ProjectExplorer(
+                    structure: snapshot.data,
+                    expanded: true,
+                  ),
+                ),
+              ),
+            ),
+            RaisedButton(
+              child: Text(
+                "Make all project macros relative",
+                overflow: TextOverflow.ellipsis,
+              ),
+              onPressed: null,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            RaisedButton(
+              child: Text(
+                "Make all project macros absolute",
+                overflow: TextOverflow.ellipsis,
+              ),
+              onPressed: null,
+            ),
+          ],
         );
       },
     );

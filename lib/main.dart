@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/layouter.dart';
+import 'package:ryx_gui/right_bar.dart';
 import 'package:ryx_gui/top_bar.dart';
 import 'package:ryx_gui/web_io.dart';
 import 'package:ryx_gui/formats.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         child: PageStructure(
           topBar: TopBar(),
           leftBar: LeftBar(),
-          rightBar: Text("Right stuff"),
+          rightBar: RightBar(),
           content: Text("Content stuff"),
         ),
       ),
@@ -58,8 +59,8 @@ class _PageStructureState extends State<PageStructure> {
     getWidth: () => 0,
     minContentWidth: 100,
     minSidebarWidth: minSidebarWidth,
-    leftWidth: 112,
-    rightWidth: 112,
+    leftWidth: 300,
+    rightWidth: 300,
   );
 
   Widget build(BuildContext context) {

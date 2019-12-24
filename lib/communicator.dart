@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:ryx_gui/communicator_data.dart';
+import 'package:ryx_gui/tool_data.dart';
 
 abstract class Io{
   Future<String> browseFolder(String root);
   Future<String> getProjectStructure(String project);
   Future<String> getDocumentStructure(String project, String document);
+  Future<String> getToolData();
 }
 
 typedef T BuildData<T>(dynamic data);
@@ -19,24 +22,32 @@ class Communicator{
   Future<Response<List<String>>> browseFolder(String root) async {
     try {
       return _buildResponse<List<String>>(await _io.browseFolder(root), _buildBrowseFolder);
-    } catch (ex) {
-      return _parseError();
+    } on Exception catch (ex) {
+      return _parseError(ex.toString());
     }
   }
 
   Future<Response<ProjectStructure>> getProjectStructure(String project) async {
     try {
       return _buildResponse<ProjectStructure>(await _io.getProjectStructure(project), _buildProjectStructure);
-    } catch (ex) {
-      return _parseError();
+    } on Exception catch (ex) {
+      return _parseError(ex.toString());
     }
   }
 
   Future<Response<DocumentStructure>> getDocumentStructure(String project, String document) async {
     try {
       return _buildResponse<DocumentStructure>(await _io.getDocumentStructure(project, document), _buildDocumentStructure);
-    } catch (ex) {
-      return _parseError();
+    } on Exception catch (ex) {
+      return _parseError(ex.toString());
+    }
+  }
+
+  Future<Response<Map<String, ToolData>>> getToolData() async {
+    try {
+      return _buildResponse<Map<String, ToolData>>(await _io.getToolData(), _buildToolData);
+    } on Exception catch (ex) {
+      return _parseError(ex.toString());
     }
   }
 
@@ -104,7 +115,32 @@ class Communicator{
     return DocumentStructure(nodes: nodes, conns: conns);
   }
 
-  Response<T> _parseError<T>(){
-    return Response<T>(null, false, 'Error parsing data returned from webserver');
+  Map<String, ToolData> _buildToolData(dynamic data) {
+    data = data as List<dynamic>;
+    var tools = Map<String, ToolData>();
+    for (var tool in (data)){
+      tool = tool as Map<String, dynamic>;
+      var plugin = tool['Plugin'] as String;
+      var inputs = List<String>();
+      for (var input in (tool['Inputs'] as List<dynamic>)){
+        inputs.add(input as String);
+      }
+      var outputs = List<String>();
+      for (var output in (tool['Outputs'] as List<dynamic>)) {
+        outputs.add(output as String);
+      }
+      var iconStr = tool['Icon'] as String;
+      var icon = iconStr == "" ? null : Image.memory(base64Decode(iconStr));
+      tools[plugin] = ToolData(
+        inputs: inputs,
+        outputs: outputs,
+        icon: icon,
+      );
+    }
+    return tools;
+  }
+
+  Response<T> _parseError<T>(String error){
+    return Response<T>(null, false, 'Error parsing data returned from webserver: ' + error);
   }
 }

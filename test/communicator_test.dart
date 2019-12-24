@@ -75,6 +75,6 @@ main(){
 
 void expectParsingDataError(Response response){
   expect(response.success, isFalse);
-  expect(response.error, equals('Error parsing data returned from webserver'));
+  expect(response.error.substring(0,42), equals('Error parsing data returned from webserver'));
   expect(response.value, isNull);
 }
