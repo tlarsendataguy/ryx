@@ -2,7 +2,6 @@ import 'package:ryx_gui/communicator.dart';
 import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/bloc_state.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:ryx_gui/tool_data.dart';
 
 class AppState extends BlocState{
   AppState(Io io){
@@ -45,6 +44,7 @@ class AppState extends BlocState{
   Future<String> getProjectStructure(String project) async {
     var toolDataResponse = await _communicator.getToolData();
     if (!toolDataResponse.success){
+      print("failed loading tool data: " + toolDataResponse.error);
       return toolDataResponse.error;
     }
     _toolData.add(toolDataResponse.value);
@@ -57,7 +57,11 @@ class AppState extends BlocState{
     return structureResponse.error;
   }
 
-  Future<String> getDocumentStructure(String project, String document) async {
+  Future<String> getDocumentStructure(String document) async {
+    var project = _currentProject.value;
+    if (project == ''){
+      return "no project was open";
+    }
     var response = await _communicator.getDocumentStructure(project, document);
     if (response.success){
       _documentStructure.add(response.value);

@@ -52,14 +52,24 @@ main(){
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull]));
     expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah")]));
 
-    var error = await state.getDocumentStructure("Blah", "Blah");
+    await state.getProjectStructure("project");
+    var error = await state.getDocumentStructure("Blah");
     expect(error, equals(""));
   });
 
   test("Get document structure error", () async {
     var state = AppState(MockInvalidIo());
     expect(state.currentDocument, emits(""));
-    var error = await state.getDocumentStructure("Blah", "Blah");
+    await state.getProjectStructure("project");
+    var error = await state.getDocumentStructure("Blah");
     expect(error, isNot(equals("")));
+  });
+
+  test("Get document structure without opening project", () async {
+    var state = AppState(MockSuccessIo());
+    expect(state.currentDocument, emits(""));
+    var error = await state.getDocumentStructure("Blah");
+    expect(error, isNot(equals("")));
+    print(error);
   });
 }

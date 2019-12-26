@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:ryx_gui/app_state.dart';
+import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/communicator_data.dart';
+import 'package:ryx_gui/error_dialog.dart';
 
 class ProjectExplorer extends StatefulWidget {
   ProjectExplorer({this.structure, this.expanded});
@@ -46,6 +49,7 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
       return Column(children: widgets);
     }
 
+    var state = BlocProvider.of<AppState>(context);
     for (var folder in widget.structure.folders) {
       widgets.add(Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0), child: ProjectExplorer(structure: folder, expanded: false)));
     }
@@ -71,11 +75,19 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
       widgets.add(
           Padding(
             padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-            child: Row(
-              children: [
-                Icon(Icons.description, color: color),
-                Text(label),
-              ],
+            child: InkWell(
+              onTap: () async {
+                var error = await state.getDocumentStructure(file);
+                if (error != ''){
+                  showDialog(context: context, child: ErrorDialog(error));
+                }
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.description, color: color),
+                  Text(label),
+                ],
+              ),
             ),
           ),
       );

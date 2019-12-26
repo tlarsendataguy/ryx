@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/project_explorer.dart';
@@ -5,8 +6,11 @@ import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/communicator_data.dart';
 
 class LeftBar extends StatelessWidget {
+  final verticalScroll = ScrollController();
+  final horizontalScroll = ScrollController();
+
   Widget build(BuildContext context) {
-    var state = BlocProvider.of<AppState>(context);
+    final state = BlocProvider.of<AppState>(context);
     return StreamBuilder(
       stream: state.projectStructure,
       builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
@@ -14,13 +18,19 @@ class LeftBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
+              child: CupertinoScrollbar(
+                controller: verticalScroll,
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ProjectExplorer(
-                    structure: snapshot.data,
-                    expanded: true,
+                  scrollDirection: Axis.vertical,
+                  child: CupertinoScrollbar(
+                    controller: horizontalScroll,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ProjectExplorer(
+                        structure: snapshot.data,
+                        expanded: true,
+                      ),
+                    ),
                   ),
                 ),
               ),

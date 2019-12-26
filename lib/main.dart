@@ -8,6 +8,7 @@ import 'package:ryx_gui/web_io.dart';
 import 'package:ryx_gui/formats.dart';
 import 'package:ryx_gui/left_bar.dart';
 import 'package:ryx_gui/sidebar.dart';
+import 'package:ryx_gui/center_content.dart';
 //import 'mock_io.dart';
 
 void main() => runApp(
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
           topBar: TopBar(),
           leftBar: LeftBar(),
           rightBar: RightBar(),
-          content: Text("Content stuff"),
+          content: CenterContent(),
         ),
       ),
     );

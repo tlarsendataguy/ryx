@@ -23,7 +23,7 @@ class WebIo extends Io {
   }
 
   Future<String> getToolData() async {
-    return await _request(function: "GetProjectStructure");
+    return await _request(function: "GetToolData");
   }
 
   Future<String> _request({String function, String project="", Map<String,String> parameters}) async {

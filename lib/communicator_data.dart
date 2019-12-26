@@ -1,3 +1,5 @@
+import 'package:flutter/widgets.dart';
+
 class Response<T> {
   Response(this.value, this.success, this.error) :
         assert(success != null && error != null);
@@ -44,4 +46,11 @@ class Conn {
   final int toId;
   final String fromAnchor;
   final String toAnchor;
+}
+
+class ToolData {
+  ToolData({this.inputs, this.outputs, this.icon}):assert(inputs != null && outputs != null);
+  final List<String> inputs;
+  final List<String> outputs;
+  final Image icon;
 }
