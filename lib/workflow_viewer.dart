@@ -1,7 +1,10 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/communicator_data.dart';
+import 'package:ryx_gui/datafy_nodes.dart';
 
 class WorkflowViewer extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -32,10 +35,12 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
   double workflowX;
   double workflowY;
   Offset dragStart;
+  double scale;
 
   void _reset(){
     workflowX = 0;
     workflowY = 0;
+    scale = 1;
   }
 
   didUpdateWidget(covariant WorkflowCanvas oldWidget){
@@ -72,7 +77,7 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
           top: workflowY,
           width: size.width,
           height: size.height,
-          child: Stack(children: content),
+          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: Stack(children: content)),
         ),
         Positioned(
           left: 20,
@@ -104,7 +109,14 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
           child: RaisedButton(
             padding: EdgeInsets.all(2),
             child: Icon(Icons.zoom_in),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                scale += 0.1;
+                if (scale > 1.5){
+                  scale = 1.5;
+                }
+              });
+            },
           ),
         ),
         Positioned(
@@ -115,7 +127,14 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
           child: RaisedButton(
             padding: EdgeInsets.all(2),
             child: Icon(Icons.zoom_out),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                scale -= 0.1;
+                if (scale < 0.3){
+                  scale = 0.3;
+                }
+              });
+            },
           ),
         ),
       ],
@@ -123,23 +142,25 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
   }
 }
 
-
 List<Widget> _generateContent(BuildContext context, DocumentStructure workflow){
   var state = BlocProvider.of<AppState>(context);
+  var nodes = datafyNodes(workflow.nodes, state.currentTools);
   var children = List<Widget>();
-  for (var node in workflow.nodes){
-    Widget icon = state.currentTools[node.plugin]?.icon;
-    if (icon == null){
+  for (var node in nodes.values){
+    Widget icon;
+    if (node.icon == null){
       icon = Container(
         color: Colors.blue,
       );
+    } else {
+      icon = CustomPaint(painter: NodePainter(node));
     }
     children.insert(0,
       Positioned(
-        left: node.x.toDouble(),
-        top: node.y.toDouble(),
-        width: node.width,
-        height: node.width,
+        left: node.node.x,
+        top: node.node.y,
+        width: node.node.width,
+        height: node.node.width,
         child: FlatButton(
           padding: EdgeInsets.all(0),
           onPressed: (){print("button");},
@@ -148,12 +169,37 @@ List<Widget> _generateContent(BuildContext context, DocumentStructure workflow){
       ),
     );
   }
+
+
   return children;
+}
+
+class NodePainter extends CustomPainter{
+  NodePainter(this.node);
+  final TooledNode node;
+
+  void paint(ui.Canvas canvas, ui.Size size) {
+    var rect = Rect.fromCenter(center: Offset(0,0),width: 60, height: 60);
+    paintImage(
+      canvas: canvas,
+      image: node.icon,
+      rect: rect,
+      filterQuality: ui.FilterQuality.high,
+    );
+    var paint = Paint();
+    paint.color = ui.Color.fromARGB(255, 255, 0, 0);
+    paint.isAntiAlias = true;
+    canvas.drawCircle(Offset(-33,0), 3, paint);
+  }
+
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
+  }
 }
 
 Size _getSize(DocumentStructure workflow){
   var height = 0.0, width = 0.0;
-  for (var node in workflow.nodes){
+  for (var node in workflow.nodes.values){
     var right = node.width + node.x;
     var bottom = node.height + node.y;
     height = bottom > height ? bottom : height;

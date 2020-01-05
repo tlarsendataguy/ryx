@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
+import 'dart:ui';
 import 'package:ryx_gui/communicator_data.dart';
 
 abstract class Io{
@@ -9,7 +9,7 @@ abstract class Io{
   Future<String> getToolData();
 }
 
-typedef T BuildData<T>(dynamic data);
+typedef Future<T> BuildData<T>(dynamic data);
 
 class Communicator{
   Communicator(Io io){
@@ -20,7 +20,7 @@ class Communicator{
 
   Future<Response<List<String>>> browseFolder(String root) async {
     try {
-      return _buildResponse<List<String>>(await _io.browseFolder(root), _buildBrowseFolder);
+      return await _buildResponse<List<String>>(await _io.browseFolder(root), _buildBrowseFolder);
     } on Exception catch (ex) {
       return _parseError(ex.toString());
     }
@@ -28,7 +28,7 @@ class Communicator{
 
   Future<Response<ProjectStructure>> getProjectStructure(String project) async {
     try {
-      return _buildResponse<ProjectStructure>(await _io.getProjectStructure(project), _buildProjectStructure);
+      return await _buildResponse<ProjectStructure>(await _io.getProjectStructure(project), _buildProjectStructure);
     } on Exception catch (ex) {
       return _parseError(ex.toString());
     }
@@ -36,7 +36,7 @@ class Communicator{
 
   Future<Response<DocumentStructure>> getDocumentStructure(String project, String document) async {
     try {
-      return _buildResponse<DocumentStructure>(await _io.getDocumentStructure(project, document), _buildDocumentStructure);
+      return await _buildResponse<DocumentStructure>(await _io.getDocumentStructure(project, document), _buildDocumentStructure);
     } on Exception catch (ex) {
       return _parseError(ex.toString());
     }
@@ -44,13 +44,13 @@ class Communicator{
 
   Future<Response<Map<String, ToolData>>> getToolData() async {
     try {
-      return _buildResponse<Map<String, ToolData>>(await _io.getToolData(), _buildToolData);
+      return await _buildResponse<Map<String, ToolData>>(await _io.getToolData(), _buildToolData);
     } on Exception catch (ex) {
       return _parseError(ex.toString());
     }
   }
 
-  Response<T> _buildResponse<T>(String response, BuildData<T> buildData) {
+  Future<Response<T>> _buildResponse<T>(String response, BuildData<T> buildData) async {
     var json = jsonDecode(response);
     var success = json['Success'] as bool;
     var error = '';
@@ -58,10 +58,10 @@ class Communicator{
       error = json['Data'] as String;
       return Response<T>(null, success, error);
     }
-    return Response<T>(buildData(json['Data']), true, '');
+    return Response<T>(await buildData(json['Data']), true, '');
   }
 
-  List<String> _buildBrowseFolder(dynamic data) {
+  Future<List<String>> _buildBrowseFolder(dynamic data) async {
     data = data as List<dynamic>;
     var paths = List<String>();
     for (var path in data) {
@@ -70,12 +70,12 @@ class Communicator{
     return paths..sort();
   }
 
-  ProjectStructure _buildProjectStructure(dynamic data) {
+  Future<ProjectStructure> _buildProjectStructure(dynamic data) async {
     data = data as Map<String, dynamic>;
     var path = data['Path'] as String;
     var folders = List<ProjectStructure>();
     for (var folder in data['Folders']){
-      folders.add(_buildProjectStructure(folder));
+      folders.add(await _buildProjectStructure(folder));
     }
     var docs = List<String>();
     for (var doc in data['Docs']){
@@ -84,21 +84,21 @@ class Communicator{
     return ProjectStructure(path: path, folders: folders, docs: docs);
   }
 
-  DocumentStructure _buildDocumentStructure(dynamic data) {
+  Future<DocumentStructure> _buildDocumentStructure(dynamic data) async {
     data = data as Map<String, dynamic>;
-    var nodes = List<Node>();
+    var nodes = Map<int, Node>();
     for (var node in (data['Nodes'] as List<dynamic>)) {
       node = node as Map<String, dynamic>;
       var toolId = node['ToolId'] as int;
-      var x = node['X'] as int;
-      var y = node['Y'] as int;
+      var x = double.parse(node['X'].toString());
+      var y = double.parse(node['Y'].toString());
       var width = double.parse(node['Width'].toString());
       var height = double.parse(node['Height'].toString());
       var plugin = node['Plugin'] as String;
       var storedMacro = node['StoredMacro'] as String;
       var foundMacro = node['FoundMacro'] as String;
       var category = node['Category'] as String;
-      nodes.add(Node(toolId: toolId, x: x, y: y, width: width, height: height, plugin: plugin, storedMacro: storedMacro, foundMacro: foundMacro, category: category));
+      nodes[toolId] = Node(toolId: toolId, x: x, y: y, width: width, height: height, plugin: plugin, storedMacro: storedMacro, foundMacro: foundMacro, category: category);
     }
 
     var conns = List<Conn>();
@@ -114,7 +114,7 @@ class Communicator{
     return DocumentStructure(nodes: nodes, conns: conns);
   }
 
-  Map<String, ToolData> _buildToolData(dynamic data) {
+  Future<Map<String, ToolData>> _buildToolData(dynamic data) async {
     data = data as List<dynamic>;
     var tools = Map<String, ToolData>();
     for (var tool in (data)){
@@ -129,7 +129,16 @@ class Communicator{
         outputs.add(output as String);
       }
       var iconStr = tool['Icon'] as String;
-      var icon = iconStr == "" ? null : Image.memory(base64Decode(iconStr));
+      Image icon;
+      if (iconStr != ""){
+        try {
+          var codec = await instantiateImageCodec(base64Decode(iconStr));
+          var frame = await codec.getNextFrame();
+          icon = frame.image;
+        } catch (ex) {
+          icon = null;
+        }
+      }
       tools[plugin] = ToolData(
         inputs: inputs,
         outputs: outputs,

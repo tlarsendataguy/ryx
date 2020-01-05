@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'dart:ui';
 
 class Response<T> {
   Response(this.value, this.success, this.error) :
@@ -20,7 +20,7 @@ class ProjectStructure {
 class DocumentStructure {
   DocumentStructure({this.nodes, this.conns}) :
         assert(nodes != null && conns != null);
-  final List<Node> nodes;
+  final Map<int, Node> nodes;
   final List<Conn> conns;
 }
 
@@ -28,8 +28,8 @@ class Node {
   Node({this.toolId, this.x, this.y, this.width, this.height, this.plugin, this.storedMacro, this.foundMacro, this.category}) :
         assert(toolId!=null && x != null && y != null && width != null && height != null && plugin != null && storedMacro != null && foundMacro != null && category != null);
   final int toolId;
-  final int x;
-  final int y;
+  final double x;
+  final double y;
   final double width;
   final double height;
   final String plugin;
