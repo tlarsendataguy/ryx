@@ -55,9 +55,17 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
 
   Widget build(BuildContext context) {
     var size = _getSize(widget.workflow);
-    var content = _generateContent(context, widget.workflow);
+    var state = BlocProvider.of<AppState>(context);
     return Stack(
       children: <Widget>[
+        Container(color: Colors.white70),
+        Positioned(
+          left: workflowX,
+          top: workflowY,
+          width: size.width,
+          height: size.height,
+          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: CustomPaint(painter: WorkflowPainter(widget.workflow, state.currentTools))),
+        ),
         GestureDetector(
           onPanStart: (details) {
             dragStart = details.globalPosition;
@@ -70,14 +78,7 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
               workflowY = workflowY > 0 ? 0 : workflowY;
             });
           },
-          child: Container(color: Colors.white70),
-        ),
-        Positioned(
-          left: workflowX,
-          top: workflowY,
-          width: size.width,
-          height: size.height,
-          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: Stack(children: content)),
+          child: Container(color: Colors.transparent),
         ),
         Positioned(
           left: 20,
@@ -142,54 +143,42 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
   }
 }
 
-List<Widget> _generateContent(BuildContext context, DocumentStructure workflow){
-  var state = BlocProvider.of<AppState>(context);
-  var nodes = datafyNodes(workflow.nodes, state.currentTools);
-  var children = List<Widget>();
-  for (var node in nodes.values){
-    Widget icon;
-    if (node.icon == null){
-      icon = Container(
-        color: Colors.blue,
-      );
-    } else {
-      icon = CustomPaint(painter: NodePainter(node));
-    }
-    children.insert(0,
-      Positioned(
-        left: node.node.x,
-        top: node.node.y,
-        width: node.node.width,
-        height: node.node.width,
-        child: FlatButton(
-          padding: EdgeInsets.all(0),
-          onPressed: (){print("button");},
-          child: icon,
-        ),
-      ),
-    );
-  }
-
-
-  return children;
-}
-
-class NodePainter extends CustomPainter{
-  NodePainter(this.node);
-  final TooledNode node;
+class WorkflowPainter extends CustomPainter{
+  WorkflowPainter(this.workflow, this.toolData);
+  final DocumentStructure workflow;
+  final Map<String, ToolData> toolData;
 
   void paint(ui.Canvas canvas, ui.Size size) {
-    var rect = Rect.fromCenter(center: Offset(0,0),width: 60, height: 60);
-    paintImage(
-      canvas: canvas,
-      image: node.icon,
-      rect: rect,
-      filterQuality: ui.FilterQuality.high,
-    );
+    var nodes = datafyNodes(workflow.nodes, toolData);
+
     var paint = Paint();
-    paint.color = ui.Color.fromARGB(255, 255, 0, 0);
     paint.isAntiAlias = true;
-    canvas.drawCircle(Offset(-33,0), 3, paint);
+    paint.color = ui.Color.fromARGB(255, 0, 0, 0);
+    for (var conn in workflow.conns){
+      canvas.drawLine(nodes[conn.fromId].getOutput(conn.fromAnchor), nodes[conn.toId].getInput(conn.toAnchor), paint);
+    }
+
+    for (var node in nodes.values){
+      var rect = Rect.fromLTRB(node.node.x, node.node.y, node.node.x+node.node.width, node.node.y+node.node.height);
+      if (node.icon == null){
+        paint.color = ui.Color.fromARGB(255, 0, 0, 255);
+        canvas.drawRect(rect, paint);
+      } else {
+        paintImage(
+          canvas: canvas,
+          image: node.icon,
+          rect: rect,
+          filterQuality: ui.FilterQuality.high,
+        );
+      }
+      paint.color = ui.Color.fromARGB(255, 255, 0, 0);
+      for (var input in node.allInputs){
+        canvas.drawCircle(input, 3, paint);
+      }
+      for (var output in node.allOutputs){
+        canvas.drawCircle(output, 3, paint);
+      }
+    }
   }
 
   bool shouldRepaint(CustomPainter oldDelegate) {
