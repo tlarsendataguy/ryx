@@ -42,7 +42,8 @@ class TooledNode{
 Map<int, TooledNode> datafyNodes(Map<int, Node> nodes, Map<String, ToolData> toolData) {
   Map<int, TooledNode> enriched = {};
   for (var node in nodes.values){
-    var matchingTool = toolData[node.plugin];
+    var key = node.plugin == "" ? node.foundMacro : node.plugin;
+    var matchingTool = toolData[key];
     if (matchingTool == null){
       enriched[node.toolId] = TooledNode(node: node, inputs: [], outputs: [], icon: null);
       continue;

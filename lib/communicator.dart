@@ -111,7 +111,9 @@ class Communicator{
       var toAnchor = conn['ToAnchor'] as String;
       conns.add(Conn(name: name, fromId: fromId, fromAnchor: fromAnchor, toId: toId, toAnchor: toAnchor));
     }
-    return DocumentStructure(nodes: nodes, conns: conns);
+
+    var toolData = await _buildToolData(data['MacroToolData']);
+    return DocumentStructure(nodes: nodes, conns: conns, toolData: toolData);
   }
 
   Future<Map<String, ToolData>> _buildToolData(dynamic data) async {

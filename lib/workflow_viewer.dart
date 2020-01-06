@@ -56,6 +56,12 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
   Widget build(BuildContext context) {
     var size = _getSize(widget.workflow);
     var state = BlocProvider.of<AppState>(context);
+    var toolData = state.currentTools;
+    for (var key in widget.workflow.toolData.keys){
+      print(key);
+      toolData[key] = widget.workflow.toolData[key];
+    }
+
     return Stack(
       children: <Widget>[
         Container(color: Colors.white70),
@@ -64,7 +70,7 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
           top: workflowY,
           width: size.width,
           height: size.height,
-          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: CustomPaint(painter: WorkflowPainter(widget.workflow, state.currentTools))),
+          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: CustomPaint(painter: WorkflowPainter(widget.workflow, toolData))),
         ),
         GestureDetector(
           onPanStart: (details) {

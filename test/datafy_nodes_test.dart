@@ -16,15 +16,26 @@ main(){
         category: 'Tool',
     ),
     1: Node(
-        toolId: 1,
-        x: 10,
-        y: 10,
-        width: 20,
-        height: 20,
-        plugin: 'InputsOutputs',
-        storedMacro: '',
-        foundMacro: '',
-        category: 'Tool',
+      toolId: 1,
+      x: 10,
+      y: 10,
+      width: 20,
+      height: 20,
+      plugin: 'InputsOutputs',
+      storedMacro: '',
+      foundMacro: '',
+      category: 'Tool',
+    ),
+    2: Node(
+      toolId: 2,
+      x: 10,
+      y: 10,
+      width: 20,
+      height: 20,
+      plugin: '',
+      storedMacro: 'ABC',
+      foundMacro: 'ABC',
+      category: 'Tool',
     ),
   };
   Map<String, ToolData> toolData = {
@@ -35,6 +46,10 @@ main(){
     'InputsOutputs': ToolData(
       inputs: ['Input1', 'Input2'],
       outputs: ['Output1','Output2'],
+    ),
+    'ABC': ToolData(
+      inputs: ['ABCIn'],
+      outputs: ['ABCOut'],
     ),
   };
 
@@ -47,6 +62,9 @@ main(){
     expect(enriched[1].getOutput('Output1'), equals(Offset(30, 10+(20/3))));
     expect(enriched[1].getInput('Input2'), equals(Offset(10, 10+(20/3*2))));
     expect(enriched[1].getOutput('Output2'), equals(Offset(30, 10+(20/3*2))));
+
+    expect(enriched[2].getInput('ABCIn'), equals(Offset(10, 20)));
+    expect(enriched[2].getOutput('ABCOut'), equals(Offset(30, 20)));
   });
 
   test("Invalid inputs/outputs return top left/right corners",(){
@@ -56,6 +74,9 @@ main(){
 
     expect(enriched[1].getInput('Invalid'), equals(Offset(10,10)));
     expect(enriched[1].getOutput('Invalid'), equals(Offset(30,10)));
+
+    expect(enriched[2].getInput('Invalid'), equals(Offset(10,10)));
+    expect(enriched[2].getOutput('Invalid'), equals(Offset(30,10)));
   });
 
   test("Add tool data to node with invalid plugin",(){
@@ -83,5 +104,7 @@ main(){
     expect(enriched[0].allOutputs.length, equals(1));
     expect(enriched[1].allInputs.length, equals(2));
     expect(enriched[1].allOutputs.length, equals(2));
+    expect(enriched[2].allInputs.length, equals(1));
+    expect(enriched[2].allOutputs.length, equals(1));
   });
 }

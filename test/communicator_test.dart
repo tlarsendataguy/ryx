@@ -63,6 +63,7 @@ main(){
     expect(response.value.conns[0].fromAnchor, equals('Output'));
     expect(response.value.conns[0].toId, equals(6));
     expect(response.value.conns[0].toAnchor, equals('Left'));
+    expect(response.value.toolData.length, equals(3));
   });
 
   test("get document structure with invalid returned json", () async{

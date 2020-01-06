@@ -18,10 +18,11 @@ class ProjectStructure {
 }
 
 class DocumentStructure {
-  DocumentStructure({this.nodes, this.conns}) :
+  DocumentStructure({this.nodes, this.conns, this.toolData}) :
         assert(nodes != null && conns != null);
   final Map<int, Node> nodes;
   final List<Conn> conns;
+  final Map<String, ToolData> toolData;
 }
 
 class Node {
