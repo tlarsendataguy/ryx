@@ -11,46 +11,55 @@ class LeftBar extends StatelessWidget {
 
   Widget build(BuildContext context) {
     final state = BlocProvider.of<AppState>(context);
+
     return StreamBuilder(
-      stream: state.projectStructure,
-      builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: CupertinoScrollbar(
-                controller: verticalScroll,
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
+      stream: state.isLoadingProject,
+      builder: (context, AsyncSnapshot<bool> snapshot){
+        if ((snapshot.hasData && snapshot.data) || !snapshot.hasData){
+          return Center(child: CircularProgressIndicator());
+        }
+        return StreamBuilder(
+          stream: state.projectStructure,
+          builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Expanded(
                   child: CupertinoScrollbar(
-                    controller: horizontalScroll,
+                    controller: verticalScroll,
                     child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: ProjectExplorer(
-                        structure: snapshot.data,
-                        expanded: true,
+                      scrollDirection: Axis.vertical,
+                      child: CupertinoScrollbar(
+                        controller: horizontalScroll,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: ProjectExplorer(
+                            structure: snapshot.data,
+                            expanded: true,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            RaisedButton(
-              child: Text(
-                "Make all project macros relative",
-                overflow: TextOverflow.ellipsis,
-              ),
-              onPressed: null,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            RaisedButton(
-              child: Text(
-                "Make all project macros absolute",
-                overflow: TextOverflow.ellipsis,
-              ),
-              onPressed: null,
-            ),
-          ],
+                RaisedButton(
+                  child: Text(
+                    "Make all project macros relative",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onPressed: null,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                RaisedButton(
+                  child: Text(
+                    "Make all project macros absolute",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onPressed: null,
+                ),
+              ],
+            );
+          },
         );
       },
     );

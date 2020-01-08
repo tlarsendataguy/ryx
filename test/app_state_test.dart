@@ -35,6 +35,7 @@ main(){
     expect(state.projectStructure, emitsInOrder([isNull, isNotNull]));
     expect(state.currentProject, emitsInOrder([equals(""), equals("Blah")]));
     expect(state.toolData, emitsInOrder([isNull, isNotNull]));
+    expect(state.isLoadingProject, emitsInOrder([false, true, false]));
 
     var error = await state.getProjectStructure("Blah");
     expect(error, equals(""));

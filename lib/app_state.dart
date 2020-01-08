@@ -26,6 +26,9 @@ class AppState extends BlocState{
   var _projectStructure = BehaviorSubject<ProjectStructure>.seeded(null);
   Stream<ProjectStructure> get projectStructure => _projectStructure.stream;
 
+  var _isLoadingProject = BehaviorSubject<bool>.seeded(false);
+  Stream<bool> get isLoadingProject => _isLoadingProject.stream;
+
   var _currentDocument = BehaviorSubject<String>.seeded("");
   Stream<String> get currentDocument => _currentDocument.stream;
 
@@ -42,6 +45,7 @@ class AppState extends BlocState{
   }
 
   Future<String> getProjectStructure(String project) async {
+    _isLoadingProject.add(true);
     var toolDataResponse = await _communicator.getToolData();
     if (!toolDataResponse.success){
       print("failed loading tool data: " + toolDataResponse.error);
@@ -54,6 +58,7 @@ class AppState extends BlocState{
       _projectStructure.add(structureResponse.value);
       _currentProject.add(project);
     }
+    _isLoadingProject.add(false);
     return structureResponse.error;
   }
 
@@ -84,6 +89,7 @@ class AppState extends BlocState{
     _currentFolder.close();
     _currentProject.close();
     _projectStructure.close();
+    _isLoadingProject.close();
     _currentDocument.close();
     _documentStructure.close();
     _toolData.close();

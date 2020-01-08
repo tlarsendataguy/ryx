@@ -58,7 +58,6 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
     var state = BlocProvider.of<AppState>(context);
     var toolData = state.currentTools;
     for (var key in widget.workflow.toolData.keys){
-      print(key);
       toolData[key] = widget.workflow.toolData[key];
     }
 
