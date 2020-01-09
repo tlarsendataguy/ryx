@@ -49,6 +49,15 @@ main(){
     expect(error, isNot(equals("")));
   });
 
+  test("Loading project clears current document",() async {
+    var state = AppState(MockSuccessIo());
+    expect(state.documentStructure, emitsInOrder([isNull, isNotNull, isNull]));
+    expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah"), equals("")]));
+    await state.getProjectStructure('project1');
+    await state.getDocumentStructure("Blah");
+    await state.getProjectStructure('project2');
+  });
+
   test("Get document structure", () async {
     var state = AppState(MockSuccessIo());
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull]));

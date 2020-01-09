@@ -49,6 +49,7 @@ class AppState extends BlocState{
 
   Future<String> getProjectStructure(String project) async {
     _isLoadingProject.add(true);
+    _unloadDocument();
     var toolDataResponse = await _communicator.getToolData();
     if (!toolDataResponse.success){
       _isLoadingProject.add(false);
@@ -84,6 +85,14 @@ class AppState extends BlocState{
   void clearFolder() async {
     _currentFolder.add("");
     _folders.add(null);
+  }
+
+  void _unloadDocument(){
+    if (_currentDocument.value == ""){
+      return;
+    }
+    _currentDocument.add("");
+    _documentStructure.add(null);
   }
 
   Future initialize() async {
