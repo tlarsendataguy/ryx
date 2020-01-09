@@ -32,6 +32,9 @@ class AppState extends BlocState{
   var _currentDocument = BehaviorSubject<String>.seeded("");
   Stream<String> get currentDocument => _currentDocument.stream;
 
+  var _isLoadingDocument = BehaviorSubject<bool>.seeded(false);
+  Stream<bool> get isLoadingDocument => _isLoadingDocument.stream;
+
   var _documentStructure = BehaviorSubject<DocumentStructure>.seeded(null);
   Stream<DocumentStructure> get documentStructure => _documentStructure.stream;
 
@@ -48,7 +51,7 @@ class AppState extends BlocState{
     _isLoadingProject.add(true);
     var toolDataResponse = await _communicator.getToolData();
     if (!toolDataResponse.success){
-      print("failed loading tool data: " + toolDataResponse.error);
+      _isLoadingProject.add(false);
       return toolDataResponse.error;
     }
     _toolData.add(toolDataResponse.value);
@@ -63,8 +66,10 @@ class AppState extends BlocState{
   }
 
   Future<String> getDocumentStructure(String document) async {
+    _isLoadingDocument.add(true);
     var project = _currentProject.value;
     if (project == ''){
+      _isLoadingDocument.add(false);
       return "no project was open";
     }
     var response = await _communicator.getDocumentStructure(project, document);
@@ -72,6 +77,7 @@ class AppState extends BlocState{
       _documentStructure.add(response.value);
       _currentDocument.add(document);
     }
+    _isLoadingDocument.add(false);
     return response.error;
   }
 
@@ -91,6 +97,7 @@ class AppState extends BlocState{
     _projectStructure.close();
     _isLoadingProject.close();
     _currentDocument.close();
+    _isLoadingDocument.close();
     _documentStructure.close();
     _toolData.close();
   }
