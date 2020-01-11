@@ -5,6 +5,7 @@ class MockSuccessIo extends Io {
     return '{"Success":true,"Data":["D:\\\\","C:\\\\"]}';
   }
   Future<String> getProjectStructure(String project) async {
+    await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":{"Path":"C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing","Folders":[{"Path":"C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\macros","Folders":[],"Docs":["C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\macros\\\\Tag with Sets.yxmc"]}],"Docs":["C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\01 SETLEAF Equations Completed.yxmd","C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\Calculate Filter Expression.yxmc","C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\new.yxmc"]}}';
   }
   Future<String> getDocumentStructure(String project, String document) async {

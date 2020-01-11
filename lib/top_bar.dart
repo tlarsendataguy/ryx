@@ -10,12 +10,21 @@ class TopBar extends StatelessWidget {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-          child: RaisedButton(
-            child: Text("Open Project"),
-            onPressed: () async {
-              state.clearFolder();
-              state.browseFolder("");
-              showDialog(context: context, builder: (context) => SelectProjectDialog());
+          child: StreamBuilder(
+            stream: state.isLoadingProject,
+            builder: (context, AsyncSnapshot<bool> snapshot){
+              var action = () async {
+                state.clearFolder();
+                state.browseFolder("");
+                showDialog(context: context, builder: (context) => SelectProjectDialog());
+              };
+              if (snapshot.hasData && snapshot.data){
+                action = null;
+              }
+              return RaisedButton(
+                child: Text("Open Project"),
+                onPressed: action,
+              );
             },
           ),
         ),
