@@ -32,8 +32,14 @@ class AppState extends BlocState{
   var _currentDocument = BehaviorSubject<String>.seeded("");
   Stream<String> get currentDocument => _currentDocument.stream;
 
+  var _whereUsed = BehaviorSubject<List<String>>.seeded([]);
+  Stream<List<String>> get whereUsed => _whereUsed.stream;
+
   var _isLoadingDocument = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isLoadingDocument => _isLoadingDocument.stream;
+
+  var _isLoadingWhereUsed = BehaviorSubject<bool>.seeded(false);
+  Stream<bool> get isLoadingWhereUsed => _isLoadingWhereUsed.stream;
 
   var _documentStructure = BehaviorSubject<DocumentStructure>.seeded(null);
   Stream<DocumentStructure> get documentStructure => _documentStructure.stream;
@@ -67,19 +73,21 @@ class AppState extends BlocState{
   }
 
   Future<String> getDocumentStructure(String document) async {
-    _isLoadingDocument.add(true);
+    _setLoadingDocStructure(true);
     var project = _currentProject.value;
     if (project == ''){
-      _isLoadingDocument.add(false);
+      _setLoadingDocStructure(false);
       return "no project was open";
     }
-    var response = await _communicator.getDocumentStructure(project, document);
-    if (response.success){
-      _documentStructure.add(response.value);
-      _currentDocument.add(document);
+    var error = await _processDoc(project, document);
+    if (error != ""){
+      _whereUsed.add([]);
+      _setLoadingDocStructure(false);
+      return error;
     }
-    _isLoadingDocument.add(false);
-    return response.error;
+    error = await _processWhereUsed(document);
+    _setLoadingDocStructure(false);
+    return error;
   }
 
   void clearFolder() async {
@@ -93,6 +101,31 @@ class AppState extends BlocState{
     }
     _currentDocument.add("");
     _documentStructure.add(null);
+    _whereUsed.add([]);
+  }
+
+  Future<String> _processDoc(String project, String document) async {
+    var getDoc = await _communicator.getDocumentStructure(project, document);
+    if (!getDoc.success){
+      return getDoc.error;
+    }
+    _documentStructure.add(getDoc.value);
+    _currentDocument.add(document);
+    return "";
+  }
+
+  Future<String> _processWhereUsed(String document) async {
+    var getWhereUsed = await _communicator.getWhereUsed(document);
+    if (!getWhereUsed.success){
+      return getWhereUsed.error;
+    }
+    _whereUsed.add(getWhereUsed.value);
+    return "";
+  }
+
+  void _setLoadingDocStructure(bool value){
+    _isLoadingDocument.add(value);
+    _isLoadingWhereUsed.add(value);
   }
 
   Future initialize() async {
@@ -106,7 +139,9 @@ class AppState extends BlocState{
     _projectStructure.close();
     _isLoadingProject.close();
     _currentDocument.close();
+    _whereUsed.close();
     _isLoadingDocument.close();
+    _isLoadingWhereUsed.close();
     _documentStructure.close();
     _toolData.close();
   }

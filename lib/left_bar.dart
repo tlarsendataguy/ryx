@@ -48,11 +48,18 @@ class LeftBar extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   onPressed: null,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 RaisedButton(
                   child: Text(
                     "Make all project macros absolute",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  onPressed: null,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                RaisedButton(
+                  child: Text(
+                    "Move selected files",
                     overflow: TextOverflow.ellipsis,
                   ),
                   onPressed: null,

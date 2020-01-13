@@ -53,6 +53,7 @@ main(){
     var state = AppState(MockSuccessIo());
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull, isNull]));
     expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah"), equals("")]));
+    expect(state.whereUsed, emitsInOrder([[],["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"], []]));
     await state.getProjectStructure('project1');
     await state.getDocumentStructure("Blah");
     await state.getProjectStructure('project2');
@@ -63,6 +64,8 @@ main(){
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull]));
     expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah")]));
     expect(state.isLoadingDocument, emitsInOrder([false, true, false]));
+    expect(state.whereUsed, emitsInOrder([[], ["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"]]));
+    expect(state.isLoadingWhereUsed, emitsInOrder([false, true, false]));
 
     await state.getProjectStructure("project");
     var error = await state.getDocumentStructure("Blah");
@@ -70,11 +73,14 @@ main(){
   });
 
   test("Get document structure error", () async {
-    var state = AppState(MockInvalidIo());
+    var state = AppState(MockValidProjectInvalidOthers());
     expect(state.currentDocument, emits(""));
+    expect(state.whereUsed, emitsInOrder([[], []]));
     expect(state.isLoadingDocument, emitsInOrder([false, true, false]));
+    expect(state.isLoadingWhereUsed, emitsInOrder([false, true, false]));
     await state.getProjectStructure("project");
     var error = await state.getDocumentStructure("Blah");
+    print(error);
     expect(error, isNot(equals("")));
   });
 

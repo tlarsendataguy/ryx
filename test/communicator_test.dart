@@ -71,6 +71,18 @@ main(){
     var response = await communicator.getDocumentStructure('','');
     expectParsingDataError(response);
   });
+
+  test("get where used", () async {
+    var communicator = Communicator(validIo);
+    var response = await communicator.getWhereUsed("Some file");
+    expect(response.success, isTrue);
+  });
+
+  test("get where used with invalid returned json", () async{
+    var communicator = Communicator(badIo);
+    var response = await communicator.getWhereUsed('Some file');
+    expectParsingDataError(response);
+  });
 }
 
 
