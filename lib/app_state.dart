@@ -85,7 +85,7 @@ class AppState extends BlocState{
       _setLoadingDocStructure(false);
       return error;
     }
-    error = await _processWhereUsed(document);
+    error = await _processWhereUsed(project, document);
     _setLoadingDocStructure(false);
     return error;
   }
@@ -114,8 +114,8 @@ class AppState extends BlocState{
     return "";
   }
 
-  Future<String> _processWhereUsed(String document) async {
-    var getWhereUsed = await _communicator.getWhereUsed(document);
+  Future<String> _processWhereUsed(String project, String document) async {
+    var getWhereUsed = await _communicator.getWhereUsed(project, document);
     if (!getWhereUsed.success){
       return getWhereUsed.error;
     }

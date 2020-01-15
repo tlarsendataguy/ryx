@@ -26,8 +26,8 @@ class WebIo extends Io {
     return await _request(function: "GetToolData");
   }
 
-  Future<String> getWhereUsed(String document) async {
-
+  Future<String> getWhereUsed(String project, String document) async {
+    return await _request(function: "WhereUsed", project: project, parameters: {"FilePath": document});
   }
 
   Future<String> _request({String function, String project="", Map<String,String> parameters}) async {

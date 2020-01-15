@@ -7,7 +7,7 @@ abstract class Io{
   Future<String> getProjectStructure(String project);
   Future<String> getDocumentStructure(String project, String document);
   Future<String> getToolData();
-  Future<String> getWhereUsed(String document);
+  Future<String> getWhereUsed(String project, String document);
 }
 
 typedef Future<T> BuildData<T>(dynamic data);
@@ -51,9 +51,9 @@ class Communicator{
     }
   }
 
-  Future<Response<List<String>>> getWhereUsed(String document) async {
+  Future<Response<List<String>>> getWhereUsed(String project, String document) async {
     try {
-      return await _buildResponse<List<String>>(await _io.getWhereUsed(document), _buildWhereUsed);
+      return await _buildResponse<List<String>>(await _io.getWhereUsed(project, document), _buildWhereUsed);
     } on Exception catch (ex) {
       return _parseError(ex.toString());
     }
