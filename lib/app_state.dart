@@ -90,6 +90,30 @@ class AppState extends BlocState{
     return error;
   }
 
+  Future<int> makeMacroAbsolute(String macro) async {
+    var project = _currentProject.value;
+    var response = await _communicator.makeMacroAbsolute(project, macro);
+    return response.value;
+  }
+
+  Future<int> makeAllAbsolute() async {
+    var project = _currentProject.value;
+    var response = await _communicator.makeAllAbsolute(project);
+    return response.value;
+  }
+
+  Future<int> makeMacroRelative(String macro) async {
+    var project = _currentProject.value;
+    var response = await _communicator.makeMacroRelative(project, macro);
+    return response.value;
+  }
+
+  Future<int> makeAllRelative() async {
+    var project = _currentProject.value;
+    var response = await _communicator.makeAllRelative(project);
+    return response.value;
+  }
+
   void clearFolder() async {
     _currentFolder.add("");
     _folders.add(null);

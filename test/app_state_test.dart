@@ -91,4 +91,28 @@ main(){
     expect(error, isNot(equals("")));
     print(error);
   });
+
+  test("Make macro absolute",() async {
+    var state = AppState(MockSuccessIo());
+    var changed = await state.makeMacroAbsolute('some macro');
+    expect(changed, equals(1));
+  });
+
+  test("Make all macros absolute",() async {
+    var state = AppState(MockSuccessIo());
+    var changed = await state.makeAllAbsolute();
+    expect(changed, equals(2));
+  });
+
+  test("Make macro relative",() async {
+    var state = AppState(MockSuccessIo());
+    var changed = await state.makeMacroRelative('some macro');
+    expect(changed, equals(3));
+  });
+
+  test("Make all macros relative",() async {
+    var state = AppState(MockSuccessIo());
+    var changed = await state.makeAllRelative();
+    expect(changed, equals(4));
+  });
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/split_path.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
-import 'package:ryx_gui/error_dialog.dart';
+import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/formats.dart';
 
 class SelectProjectDialog extends StatelessWidget {

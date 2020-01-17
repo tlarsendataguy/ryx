@@ -20,13 +20,13 @@ class MockSuccessIo extends Io {
     return '{"Success":true,"Data":1}';
   }
   Future<String> makeAllAbsolute(String project) async {
-    return '{"Success":true,"Data":1}';
+    return '{"Success":true,"Data":2}';
   }
   Future<String> makeMacroRelative(String project, String macro) async {
-    return '{"Success":true,"Data":1}';
+    return '{"Success":true,"Data":3}';
   }
   Future<String> makeAllRelative(String project) async {
-    return '{"Success":true,"Data":1}';
+    return '{"Success":true,"Data":4}';
   }
 }
 

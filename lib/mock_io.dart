@@ -20,16 +20,20 @@ class MockSuccessIo extends Io {
     return '{"Success":true,"Data":["C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\01 SETLEAF Equations Completed.yxmd"]}';
   }
   Future<String> makeMacroAbsolute(String project, String macro) async {
+    await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":1}';
   }
   Future<String> makeAllAbsolute(String project) async {
-    return '{"Success":true,"Data":1}';
+    await Future.delayed(Duration(seconds: 2));
+    return '{"Success":true,"Data":2}';
   }
   Future<String> makeMacroRelative(String project, String macro) async {
-    return '{"Success":true,"Data":1}';
+    await Future.delayed(Duration(seconds: 2));
+    return '{"Success":true,"Data":3}';
   }
   Future<String> makeAllRelative(String project) async {
-    return '{"Success":true,"Data":1}';
+    await Future.delayed(Duration(seconds: 2));
+    return '{"Success":true,"Data":4}';
   }
 }
 
