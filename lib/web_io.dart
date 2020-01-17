@@ -30,6 +30,22 @@ class WebIo extends Io {
     return await _request(function: "WhereUsed", project: project, parameters: {"FilePath": document});
   }
 
+  Future<String> makeMacroAbsolute(String project, String macro) async {
+    return await _request(function: "MakeMacroAbsolute", project: project, parameters: {"Macro": macro});
+  }
+
+  Future<String> makeAllAbsolute(String project) async {
+    return await _request(function: "MakeAllMacrosAbsolute", project: project);
+  }
+
+  Future<String> makeMacroRelative(String project, String macro) async {
+    return await _request(function: "MakeMacroRelative", project: project, parameters: {"Macro": macro});
+  }
+
+  Future<String> makeAllRelative(String project) async {
+    return await _request(function: "MakeAllMacrosRelative", project: project);
+  }
+
   Future<String> _request({String function, String project="", Map<String,String> parameters}) async {
     if (parameters == null){
       parameters = Map<String,String>();

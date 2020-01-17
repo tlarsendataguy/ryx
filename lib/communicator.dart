@@ -8,9 +8,14 @@ abstract class Io{
   Future<String> getDocumentStructure(String project, String document);
   Future<String> getToolData();
   Future<String> getWhereUsed(String project, String document);
+  Future<String> makeMacroAbsolute(String project, String macro);
+  Future<String> makeAllAbsolute(String project);
+  Future<String> makeMacroRelative(String project, String macro);
+  Future<String> makeAllRelative(String project);
 }
 
 typedef Future<T> BuildData<T>(dynamic data);
+typedef Future<String> SendRequest();
 
 class Communicator{
   Communicator(Io io){
@@ -20,54 +25,82 @@ class Communicator{
   Io _io;
 
   Future<Response<List<String>>> browseFolder(String root) async {
-    try {
-      return await _buildResponse<List<String>>(await _io.browseFolder(root), _buildBrowseFolder);
-    } on Exception catch (ex) {
-      return _parseError(ex.toString());
-    }
+    return await _buildResponse(
+      request: ()async => await _io.browseFolder(root),
+      buildData: _buildBrowseFolder,
+    );
   }
 
   Future<Response<ProjectStructure>> getProjectStructure(String project) async {
-    try {
-      return await _buildResponse<ProjectStructure>(await _io.getProjectStructure(project), _buildProjectStructure);
-    } on Exception catch (ex) {
-      return _parseError(ex.toString());
-    }
+    return await _buildResponse(
+      request: ()async => await _io.getProjectStructure(project),
+      buildData: _buildProjectStructure,
+    );
   }
 
   Future<Response<DocumentStructure>> getDocumentStructure(String project, String document) async {
-    try {
-      return await _buildResponse<DocumentStructure>(await _io.getDocumentStructure(project, document), _buildDocumentStructure);
-    } on Exception catch (ex) {
-      return _parseError(ex.toString());
-    }
+    return await _buildResponse(
+      request: ()async => await _io.getDocumentStructure(project, document),
+      buildData: _buildDocumentStructure,
+    );
   }
 
   Future<Response<Map<String, ToolData>>> getToolData() async {
-    try {
-      return await _buildResponse<Map<String, ToolData>>(await _io.getToolData(), _buildToolData);
-    } on Exception catch (ex) {
-      return _parseError(ex.toString());
-    }
+    return await _buildResponse(
+      request: ()async => await _io.getToolData(),
+      buildData: _buildToolData,
+    );
   }
 
   Future<Response<List<String>>> getWhereUsed(String project, String document) async {
+    return await _buildResponse(
+      request: ()async => await _io.getWhereUsed(project, document),
+      buildData: _buildWhereUsed,
+    );
+  }
+
+  Future<Response<int>> makeMacroAbsolute(String project, String macro) async {
+    return await _buildResponse(
+      request: ()async => await _io.makeMacroAbsolute(project, macro),
+      buildData: _buildIntResponse,
+    );
+  }
+
+  Future<Response<int>> makeAllAbsolute(String project) async {
+    return await _buildResponse(
+      request: ()async => await _io.makeAllAbsolute(project),
+      buildData: _buildIntResponse,
+    );
+  }
+
+  Future<Response<int>> makeMacroRelative(String project, String macro) async {
+    return await _buildResponse(
+      request: () async => await _io.makeMacroRelative(project, macro),
+      buildData: _buildIntResponse,
+    );
+  }
+
+  Future<Response<int>> makeAllRelative(String project) async {
+    return await _buildResponse(
+      request: () async => await _io.makeAllRelative(project),
+      buildData: _buildIntResponse,
+    );
+  }
+
+  Future<Response<T>> _buildResponse<T>({SendRequest request, BuildData<T> buildData}) async {
     try {
-      return await _buildResponse<List<String>>(await _io.getWhereUsed(project, document), _buildWhereUsed);
+      var response = await request();
+      var json = jsonDecode(response);
+      var success = json['Success'] as bool;
+      var error = '';
+      if (!success) {
+        error = json['Data'] as String;
+        return Response<T>(null, success, error);
+      }
+      return Response<T>(await buildData(json['Data']), true, '');
     } on Exception catch (ex) {
       return _parseError(ex.toString());
     }
-  }
-
-  Future<Response<T>> _buildResponse<T>(String response, BuildData<T> buildData) async {
-    var json = jsonDecode(response);
-    var success = json['Success'] as bool;
-    var error = '';
-    if (!success) {
-      error = json['Data'] as String;
-      return Response<T>(null, success, error);
-    }
-    return Response<T>(await buildData(json['Data']), true, '');
   }
 
   Future<List<String>> _buildBrowseFolder(dynamic data) async {
@@ -168,6 +201,8 @@ class Communicator{
     whereUsed.sort();
     return whereUsed;
   }
+
+  Future<int> _buildIntResponse(dynamic data) async => data as int;
 
   Response<T> _parseError<T>(String error){
     return Response<T>(null, false, 'Error parsing data returned from webserver: ' + error);
