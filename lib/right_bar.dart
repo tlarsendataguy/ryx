@@ -9,7 +9,7 @@ class RightBar extends StatelessWidget {
     return StreamBuilder(
       stream: state.currentDocument,
       builder: (context, AsyncSnapshot<String> snapshot){
-        if (!snapshot.hasData && snapshot.data != ""){
+        if (!snapshot.hasData || snapshot.data == ""){
           return Container();
         }
         return Column(
@@ -84,7 +84,10 @@ class RightBar extends StatelessWidget {
                           return ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index){
-                              return Text(snapshot.data[index]);
+                              return InkWell(
+                                child: Text(snapshot.data[index]),
+                                onDoubleTap: ()=>state.getDocumentStructure(snapshot.data[index]),
+                              );
                             },
                           );
                         }
