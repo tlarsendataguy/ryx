@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
-import 'package:ryx_gui/left_bar.dart';
+import 'package:ryx_gui/change_paths_button.dart';
 
 class RightBar extends StatelessWidget {
   Widget build(BuildContext context) {
