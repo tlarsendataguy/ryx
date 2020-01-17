@@ -41,7 +41,7 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
             Text(label),
           ],
         ),
-        onTap: ()=>setState(()=>expanded = !expanded),
+        onDoubleTap: ()=>setState(()=>expanded = !expanded),
       ),
     ];
 
@@ -76,7 +76,7 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
           Padding(
             padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
             child: InkWell(
-              onTap: () async {
+              onDoubleTap: () async {
                 var error = await state.getDocumentStructure(file);
                 if (error != ''){
                   showDialog(context: context, child: ErrorDialog(error));
