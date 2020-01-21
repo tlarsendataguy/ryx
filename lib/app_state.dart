@@ -85,8 +85,9 @@ class AppState extends BlocState{
       _setLoadingDocStructure(false);
       return error;
     }
+    _isLoadingDocument.add(false);
     error = await _processWhereUsed(project, document);
-    _setLoadingDocStructure(false);
+    _isLoadingWhereUsed.add(false);
     return error;
   }
 

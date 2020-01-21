@@ -8,8 +8,8 @@ class RightBar extends StatelessWidget {
     var state = BlocProvider.of<AppState>(context);
     return StreamBuilder(
       stream: state.currentDocument,
-      builder: (context, AsyncSnapshot<String> snapshot){
-        if (!snapshot.hasData || snapshot.data == ""){
+      builder: (context, AsyncSnapshot<String> snapshot) {
+        if (!snapshot.hasData || snapshot.data == "") {
           return Container();
         }
         return Column(
@@ -36,7 +36,7 @@ class RightBar extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               busyMessage: "Making macro relative in project workflows...",
-              changePathsAction: ()=>state.makeMacroRelative(snapshot.data),
+              changePathsAction: () => state.makeMacroRelative(snapshot.data),
             ),
             ChangePathsButton(
               child: Text(
@@ -45,7 +45,7 @@ class RightBar extends StatelessWidget {
               ),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               busyMessage: "Making macro absolute in project workflows...",
-              changePathsAction: ()=>state.makeMacroAbsolute(snapshot.data),
+              changePathsAction: () => state.makeMacroAbsolute(snapshot.data),
             ),
             RaisedButton(
               child: Text(
@@ -70,37 +70,53 @@ class RightBar extends StatelessWidget {
               onPressed: null,
             ),
             Expanded(
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    "Where used in project:",
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Expanded(
-                    child: StreamBuilder(
-                      stream: state.whereUsed,
-                      builder: (context, AsyncSnapshot<List<String>> snapshot){
-                        if (snapshot.hasData){
-                          return ListView.builder(
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (context, index){
-                              return InkWell(
-                                child: Text(snapshot.data[index]),
-                                onDoubleTap: ()=>state.getDocumentStructure(snapshot.data[index]),
-                              );
-                            },
-                          );
-                        }
-                        return Container();
-                      },
-                    ),
-                  ),
-                ],
-              ),
+              child: WhereUsedViewer(),
             ),
           ],
         );
       },
+    );
+  }
+}
+
+class WhereUsedViewer extends StatelessWidget {
+  Widget build(BuildContext context) {
+    var state = BlocProvider.of<AppState>(context);
+    return Column(
+      children: <Widget>[
+        Text(
+          "Where used in project:",
+          overflow: TextOverflow.ellipsis,
+        ),
+        Expanded(
+          child: StreamBuilder(
+            stream: state.isLoadingWhereUsed,
+            builder: (context, AsyncSnapshot<bool> snapshot) {
+              if (!snapshot.hasData || snapshot.data) {
+                return Center(child: CircularProgressIndicator());
+              }
+              return StreamBuilder(
+                stream: state.whereUsed,
+                builder: (context, AsyncSnapshot<List<String>> snapshot) {
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          child: Text(snapshot.data[index]),
+                          onDoubleTap: () =>
+                              state.getDocumentStructure(snapshot.data[index]),
+                        );
+                      },
+                    );
+                  }
+                  return Container();
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
