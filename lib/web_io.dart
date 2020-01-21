@@ -46,6 +46,10 @@ class WebIo extends Io {
     return await _request(function: "MakeAllMacrosRelative", project: project);
   }
 
+  Future<String> renameFile(String project, String from, String to) async {
+    return await _request(function: "RenameFile", project: project, parameters: {"From":from, "To": to});
+  }
+
   Future<String> _request({String function, String project="", Map<String,String> parameters}) async {
     if (parameters == null){
       parameters = Map<String,String>();

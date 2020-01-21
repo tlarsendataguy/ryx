@@ -35,6 +35,10 @@ class MockSuccessIo extends Io {
     await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":4}';
   }
+  Future<String> renameFile(String project, String from, String to) async {
+    await Future.delayed(Duration(seconds: 2));
+    return '{"Success":true,"Data":null}';
+  }
 }
 
 class MockInvalidIo extends Io {
@@ -49,4 +53,5 @@ class MockInvalidIo extends Io {
   Future<String> makeAllAbsolute(String project) async => "blah blah blah";
   Future<String> makeMacroRelative(String project, String macro) async => "blah blah blah";
   Future<String> makeAllRelative(String project) async => "blah blah blah";
+  Future<String> renameFile(String project, String from, String to) async => "blah blah blah";
 }

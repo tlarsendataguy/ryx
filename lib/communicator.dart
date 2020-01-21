@@ -12,6 +12,7 @@ abstract class Io{
   Future<String> makeAllAbsolute(String project);
   Future<String> makeMacroRelative(String project, String macro);
   Future<String> makeAllRelative(String project);
+  Future<String> renameFile(String project, String from, String to);
 }
 
 typedef Future<T> BuildData<T>(dynamic data);
@@ -87,6 +88,13 @@ class Communicator{
     );
   }
 
+  Future<Response<void>> renameFile(String project, String from, String to) async {
+    return await _buildResponse(
+      request: () async => await _io.renameFile(project, from, to),
+      buildData: (data){return;},
+    );
+  }
+
   Future<Response<T>> _buildResponse<T>({SendRequest request, BuildData<T> buildData}) async {
     try {
       var response = await request();
@@ -151,7 +159,8 @@ class Communicator{
       var toId = conn['ToId'] as int;
       var fromAnchor = conn['FromAnchor'] as String;
       var toAnchor = conn['ToAnchor'] as String;
-      conns.add(Conn(name: name, fromId: fromId, fromAnchor: fromAnchor, toId: toId, toAnchor: toAnchor));
+      var wireless = conn['Wireless'] as String == 'True' ? true : false;
+      conns.add(Conn(name: name, wireless: wireless, fromId: fromId, fromAnchor: fromAnchor, toId: toId, toAnchor: toAnchor));
     }
 
     var toolData = await _buildToolData(data['MacroToolData']);

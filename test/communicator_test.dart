@@ -131,6 +131,12 @@ main(){
     var response = await communicator.makeAllRelative('Project');
     expectParsingDataError(response);
   });
+
+  test("rename file", () async {
+    var communicator = Communicator(validIo);
+    var response = await communicator.renameFile('Project', 'macro', 'macro2');
+    expect(response.success, isTrue);
+  });
 }
 
 

@@ -40,13 +40,14 @@ class Node {
 }
 
 class Conn {
-  Conn({this.name, this.fromId, this.fromAnchor, this.toId, this.toAnchor}) :
-        assert(name != null && fromId != null && fromAnchor != null && toId != null && toAnchor != null);
+  Conn({this.name, this.wireless, this.fromId, this.fromAnchor, this.toId, this.toAnchor}) :
+        assert(name != null && fromId != null && fromAnchor != null && toId != null && toAnchor != null && wireless != null);
   final String name;
   final int fromId;
   final int toId;
   final String fromAnchor;
   final String toAnchor;
+  final bool wireless;
 }
 
 class ToolData {
