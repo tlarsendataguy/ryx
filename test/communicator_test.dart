@@ -47,7 +47,7 @@ main(){
     var response = await communicator.getDocumentStructure('', '');
     expect(response.success, isTrue);
     expect(response.error, equals(''));
-    expect(response.value.nodes.length, equals(14));
+    expect(response.value.nodes.length, equals(11));
     expect(response.value.nodes[1].toolId, equals(1));
     expect(response.value.nodes[1].x, equals(54));
     expect(response.value.nodes[1].y, equals(54));

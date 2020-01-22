@@ -159,7 +159,7 @@ class Communicator{
       var toId = conn['ToId'] as int;
       var fromAnchor = conn['FromAnchor'] as String;
       var toAnchor = conn['ToAnchor'] as String;
-      var wireless = conn['Wireless'] as String == 'True' ? true : false;
+      var wireless = conn['Wireless'] as bool;
       conns.add(Conn(name: name, wireless: wireless, fromId: fromId, fromAnchor: fromAnchor, toId: toId, toAnchor: toAnchor));
     }
 
