@@ -165,7 +165,7 @@ class WorkflowPainter extends CustomPainter{
       var from = fromNode.getInterfaceOut(conn.fromAnchor);
       if (from == null) from = fromNode.getOutput(conn.fromAnchor);
       var to = toNode.getInterfaceIn(conn.toAnchor);
-      if (to == null) to = toNode.getOutput(conn.toAnchor);
+      if (to == null) to = toNode.getInput(conn.toAnchor);
       
       canvas.drawLine(from, to, paint);
     }
