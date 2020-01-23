@@ -160,7 +160,14 @@ class WorkflowPainter extends CustomPainter{
     paint.isAntiAlias = true;
     paint.color = ui.Color.fromARGB(255, 0, 0, 0);
     for (var conn in workflow.conns){
-      canvas.drawLine(nodes[conn.fromId].getOutput(conn.fromAnchor), nodes[conn.toId].getInput(conn.toAnchor), paint);
+      var fromNode = nodes[conn.fromId];
+      var toNode = nodes[conn.toId];
+      var from = fromNode.getInterfaceOut(conn.fromAnchor);
+      if (from == null) from = fromNode.getOutput(conn.fromAnchor);
+      var to = toNode.getInterfaceIn(conn.toAnchor);
+      if (to == null) to = toNode.getOutput(conn.toAnchor);
+      
+      canvas.drawLine(from, to, paint);
     }
 
     for (var node in nodes.values){

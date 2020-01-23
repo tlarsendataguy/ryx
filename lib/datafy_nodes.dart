@@ -14,12 +14,32 @@ class TooledNode{
   final Image icon;
   Map<String, Offset> _inputs;
   Map<String, Offset> _outputs;
+  static const Map<String, double> _interfaceIns = {
+    "Condition": 1/3,
+    "Question": 2/3,
+    "Question Input": 0.5,
+    "Action": 0.5,
+  };
+  static const Map<String, double> _interfaceOuts = {
+    "Question": 0.5,
+    "Action": 0.5,
+    "True Condition": 1/3,
+    "False Condition": 2/3,
+  };
 
   Iterable<Offset> get allInputs => _inputs.values;
   Iterable<Offset> get allOutputs => _outputs.values;
 
   Offset getInput(String name) => _getOffset(name, _inputs, node.x);
   Offset getOutput(String name) => _getOffset(name, _outputs, node.x+node.width);
+  Offset getInterfaceIn(String name) {
+    if (!_interfaceIns.containsKey(name)) return null;
+    return Offset((node.width * _interfaceIns[name]) + node.x, node.y);
+  }
+  Offset getInterfaceOut(String name) {
+    if (!_interfaceOuts.containsKey(name)) return null;
+    return Offset((node.width * _interfaceOuts[name]) + node.x, node.y+node.height);
+  }
 
   void _calcOffsets(Map<String, Offset> offsets, List<String> anchors, double x) {
     var distance = node.height / (anchors.length + 1);

@@ -107,4 +107,37 @@ main(){
     expect(enriched[2].allInputs.length, equals(1));
     expect(enriched[2].allOutputs.length, equals(1));
   });
+
+  test("Interface anchors are available and positioned properly", (){
+    var enriched = datafyNodes(nodes, toolData);
+    expect(enriched[0].getInterfaceIn('Condition'), equals(Offset(10*(1/3)+0, 0)));
+    expect(enriched[0].getInterfaceIn('Question'), equals(Offset(10*(2/3)+0, 0)));
+    expect(enriched[0].getInterfaceIn('Question Input'), equals(Offset(5, 0)));
+    expect(enriched[0].getInterfaceIn('Action'), equals(Offset(5, 0)));
+
+    expect(enriched[0].getInterfaceOut('Question'), equals(Offset(5, 10)));
+    expect(enriched[0].getInterfaceOut('Action'), equals(Offset(5, 10)));
+    expect(enriched[0].getInterfaceOut('True Condition'), equals(Offset(10*(1/3)+0, 10)));
+    expect(enriched[0].getInterfaceOut('False Condition'), equals(Offset(10*(2/3)+0, 10)));
+  });
+
+  test("Invalid interface anchors return null",(){
+    var enriched = datafyNodes(nodes, toolData);
+    expect(enriched[0].getInterfaceIn('Invalid'), isNull);
+    expect(enriched[0].getInterfaceOut('Invalid'), isNull);
+  });
 }
+
+/*
+InterfaceIn
+	Condition (left)
+	Question (right)
+	Question Input (middle)
+	Action (middle)
+
+InterfaceOut
+	Question (middle)
+	Action (middle)
+	True Condition (left)
+	False Condition (right)
+ */
