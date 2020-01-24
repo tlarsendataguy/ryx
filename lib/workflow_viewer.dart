@@ -155,41 +155,74 @@ class WorkflowPainter extends CustomPainter{
 
   void paint(ui.Canvas canvas, ui.Size size) {
     var nodes = datafyNodes(workflow.nodes, toolData);
+    var containers = List<TooledNode>();
+    var tools = List<TooledNode>();
+
+    for (var node in nodes.values){
+      if (['AlteryxGuiToolkit.HtmlBox.HtmlBox', 'AlteryxGuiToolkit.TextBox.TextBox', 'AlteryxGuiToolkit.ToolContainer.ToolContainer'].contains(node.node.plugin)){
+        containers.add(node);
+        continue;
+      }
+      tools.add(node);
+    }
 
     var paint = Paint();
     paint.isAntiAlias = true;
+
+    _paintContainers(containers, canvas, paint);
+    _paintConnections(workflow.conns, nodes, canvas, paint);
+    _paintTools(tools, canvas, paint);
+  }
+
+  void _paintTools(List<TooledNode> tools, Canvas canvas, Paint paint){
+    for (var tool in tools){
+      var rect = Rect.fromLTRB(tool.node.x, tool.node.y, tool.node.x+tool.node.width, tool.node.y+tool.node.height);
+      if (tool.icon == null){
+        paint.color = ui.Color.fromARGB(255, 0, 0, 255);
+        canvas.drawRect(rect, paint);
+      } else {
+        paintImage(
+          canvas: canvas,
+          image: tool.icon,
+          rect: rect,
+          filterQuality: ui.FilterQuality.high,
+        );
+      }
+      paint.color = ui.Color.fromARGB(255, 255, 0, 0);
+      for (var input in tool.allInputs){
+        canvas.drawCircle(input, 3, paint);
+      }
+      for (var output in tool.allOutputs){
+        canvas.drawCircle(output, 3, paint);
+      }
+    }
+  }
+
+  void _paintContainers(List<TooledNode> containers, Canvas canvas, Paint paint){
+    for (var container in containers){
+      var rect = Rect.fromLTRB(container.node.x, container.node.y, container.node.x+container.node.width, container.node.y+container.node.height);
+      paint.color = ui.Color.fromARGB(255, 40, 40, 40);
+      paint.style = PaintingStyle.stroke;
+      canvas.drawRect(rect, paint);
+
+      var innerRect = rect.deflate(1.0);
+      paint.color = ui.Color.fromARGB(100, 200, 200, 200);
+      paint.style = PaintingStyle.fill;
+      canvas.drawRect(innerRect, paint);
+    }
+  }
+
+  void _paintConnections(List<Conn> conns, Map<int, TooledNode> nodes, Canvas canvas, Paint paint){
     paint.color = ui.Color.fromARGB(255, 0, 0, 0);
-    for (var conn in workflow.conns){
+    for (var conn in conns){
       var fromNode = nodes[conn.fromId];
       var toNode = nodes[conn.toId];
       var from = fromNode.getInterfaceOut(conn.fromAnchor);
       if (from == null) from = fromNode.getOutput(conn.fromAnchor);
       var to = toNode.getInterfaceIn(conn.toAnchor);
       if (to == null) to = toNode.getInput(conn.toAnchor);
-      
-      canvas.drawLine(from, to, paint);
-    }
 
-    for (var node in nodes.values){
-      var rect = Rect.fromLTRB(node.node.x, node.node.y, node.node.x+node.node.width, node.node.y+node.node.height);
-      if (node.icon == null){
-        paint.color = ui.Color.fromARGB(255, 0, 0, 255);
-        canvas.drawRect(rect, paint);
-      } else {
-        paintImage(
-          canvas: canvas,
-          image: node.icon,
-          rect: rect,
-          filterQuality: ui.FilterQuality.high,
-        );
-      }
-      paint.color = ui.Color.fromARGB(255, 255, 0, 0);
-      for (var input in node.allInputs){
-        canvas.drawCircle(input, 3, paint);
-      }
-      for (var output in node.allOutputs){
-        canvas.drawCircle(output, 3, paint);
-      }
+      canvas.drawLine(from, to, paint);
     }
   }
 
