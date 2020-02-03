@@ -39,6 +39,8 @@ main(){
 
     var error = await state.getProjectStructure("Blah");
     expect(error, equals(""));
+    var structure = await state.projectStructure.firstWhere((structure) =>structure != null);
+    expect(structure.expanded, isTrue);
   });
 
   test("Get project structure error", () async {
@@ -114,5 +116,14 @@ main(){
     var state = AppState(MockSuccessIo());
     var changed = await state.makeAllRelative();
     expect(changed, equals(4));
+  });
+
+  test("Rename file",() async {
+    var state = AppState(MockSuccessIo());
+    expect(state.currentDocument, emitsInOrder(['','Old File', 'New File']));
+    await state.getProjectStructure('project');
+    await state.getDocumentStructure('Old File');
+    var error = await state.renameFile('New File');
+    expect(error, equals(''));
   });
 }

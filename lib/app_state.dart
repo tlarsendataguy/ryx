@@ -65,6 +65,7 @@ class AppState extends BlocState{
 
     var structureResponse = await _communicator.getProjectStructure(project);
     if (structureResponse.success){
+      structureResponse.value.toggleExpanded();
       _projectStructure.add(structureResponse.value);
       _currentProject.add(project);
     }
@@ -113,6 +114,16 @@ class AppState extends BlocState{
     var project = _currentProject.value;
     var response = await _communicator.makeAllRelative(project);
     return response.value;
+  }
+
+  Future<String> renameFile(String newFile) async {
+    var project = _currentProject.value;
+    var oldFile = _currentDocument.value;
+    var response = await _communicator.renameFile(project, oldFile, newFile);
+    if (response.success){
+      _currentDocument.add(newFile);
+    }
+    return response.error;
   }
 
   void clearFolder() async {

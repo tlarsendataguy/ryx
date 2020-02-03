@@ -39,7 +39,6 @@ class LeftBar extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           child: ProjectExplorer(
                             structure: snapshot.data,
-                            expanded: true,
                           ),
                         ),
                       ),

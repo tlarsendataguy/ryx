@@ -10,11 +10,19 @@ class Response<T> {
 }
 
 class ProjectStructure {
-  ProjectStructure({this.path, this.folders, this.docs}) :
-        assert(path != null && folders != null && docs != null);
+  ProjectStructure({this.path, this.folders, this.docs, bool expanded = false}) :
+        assert(path != null && folders != null && docs != null) {
+    _expanded = expanded;
+  }
   final String path;
   final List<ProjectStructure> folders;
   final List<String> docs;
+  bool _expanded;
+  bool get expanded => _expanded;
+
+  void toggleExpanded(){
+    _expanded = !_expanded;
+  }
 }
 
 class DocumentStructure {

@@ -5,9 +5,8 @@ import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/dialogs.dart';
 
 class ProjectExplorer extends StatefulWidget {
-  ProjectExplorer({this.structure, this.expanded});
+  ProjectExplorer({this.structure});
   final ProjectStructure structure;
-  final bool expanded;
   @override
   State<StatefulWidget> createState() => _ProjectExplorerState();
 }
@@ -19,13 +18,6 @@ const Color yxmcColor = Color.fromARGB(255, 82, 89, 182);
 
 class _ProjectExplorerState extends State<ProjectExplorer> {
   _ProjectExplorerState();
-
-  initState(){
-    expanded = widget.expanded;
-    super.initState();
-  }
-
-  bool expanded;
 
   Widget build(BuildContext context) {
     if (widget.structure == null){
@@ -41,17 +33,17 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
             Text(label),
           ],
         ),
-        onDoubleTap: ()=>setState(()=>expanded = !expanded),
+        onDoubleTap: ()=>setState(widget.structure.toggleExpanded),
       ),
     ];
 
-    if (!expanded){
+    if (!widget.structure.expanded){
       return Column(children: widgets);
     }
 
     var state = BlocProvider.of<AppState>(context);
     for (var folder in widget.structure.folders) {
-      widgets.add(Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0), child: ProjectExplorer(structure: folder, expanded: false)));
+      widgets.add(Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0), child: ProjectExplorer(structure: folder)));
     }
     for (var file in widget.structure.docs) {
       var label = file.split("\\").last;

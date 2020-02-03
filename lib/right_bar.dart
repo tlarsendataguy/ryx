@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/change_paths_button.dart';
+import 'package:ryx_gui/dialogs.dart';
+import 'package:ryx_gui/formats.dart';
 
 class RightBar extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -20,7 +22,54 @@ class RightBar extends StatelessWidget {
                 "Rename Macro",
                 overflow: TextOverflow.ellipsis,
               ),
-              onPressed: null,
+              onPressed: () async {
+                var controller = TextEditingController();
+                var newName = await showDialog<String>(
+                  context: context,
+                  builder: (context){
+                    return Dialog(
+                      backgroundColor: cardColor,
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            TextField(
+                              controller: controller,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                FlatButton(
+                                  child: Text("Cancel"),
+                                  onPressed: ()=>Navigator.of(context).pop(''),
+                                ),
+                                RaisedButton(
+                                  child: Text("Rename"),
+                                  onPressed: ()=>Navigator.of(context).pop(controller.text),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                );
+                if (newName == ""){
+                  return;
+                }
+                var error = await state.renameFile(newName);
+                if (error == ""){
+                  return;
+                }
+                await showDialog(
+                  context: context,
+                  builder: (context){
+                    return ErrorDialog(error);
+                  },
+                );
+              },
             ),
             RaisedButton(
               child: Text(
