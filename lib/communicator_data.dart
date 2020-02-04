@@ -23,6 +23,43 @@ class ProjectStructure {
   void toggleExpanded(){
     _expanded = !_expanded;
   }
+
+  void renameFile(String oldName, String newName){
+    var found = removeFile(oldName);
+    if (found){
+      addFile(newName);
+    }
+  }
+
+  bool removeFile(String removePath){
+    for (var i = 0; i < docs.length; i++){
+      if (docs[i] != removePath){
+        continue;
+      }
+      docs.removeAt(i);
+      return true;
+    }
+
+    for (var folder in folders){
+      if (folder.removeFile(removePath)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void addFile(String addPath){
+    var parentSplit = addPath.split("\\")..removeLast();
+    var parent = parentSplit.join("\\");
+    if (path != parent){
+      for (var folder in folders){
+        folder.addFile(addPath);
+      }
+      return;
+    }
+    docs.add(addPath);
+    docs.sort();
+  }
 }
 
 class DocumentStructure {
