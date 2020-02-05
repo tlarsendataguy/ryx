@@ -5,6 +5,26 @@ import 'package:ryx_gui/change_paths_button.dart';
 import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/formats.dart';
 
+class FileParts{
+  FileParts({this.parent, this.name, this.ext});
+  final String parent;
+  final String name;
+  final String ext;
+
+  String newName(String newName){
+    return parent + newName + ext;
+  }
+
+  static FileParts fromPath(String path){
+    var split = path.split("\\");
+    var file = split.removeLast();
+    var parent = split.join("\\") + "\\";
+    var fileSplit = file.split(".");
+    var ext = "." + fileSplit.removeLast();
+    var name = fileSplit.join(".");
+    return FileParts(parent: parent, name: name, ext: ext);
+  }
+}
 class RightBar extends StatelessWidget {
   Widget build(BuildContext context) {
     var state = BlocProvider.of<AppState>(context);
@@ -14,6 +34,9 @@ class RightBar extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data == "") {
           return Container();
         }
+
+        var fileParts = FileParts.fromPath(snapshot.data);
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -22,54 +45,7 @@ class RightBar extends StatelessWidget {
                 "Rename Macro",
                 overflow: TextOverflow.ellipsis,
               ),
-              onPressed: () async {
-                var controller = TextEditingController();
-                var newName = await showDialog<String>(
-                  context: context,
-                  builder: (context){
-                    return Dialog(
-                      backgroundColor: cardColor,
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            TextField(
-                              controller: controller,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                FlatButton(
-                                  child: Text("Cancel"),
-                                  onPressed: ()=>Navigator.of(context).pop(''),
-                                ),
-                                RaisedButton(
-                                  child: Text("Rename"),
-                                  onPressed: ()=>Navigator.of(context).pop(controller.text),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
-                );
-                if (newName == ""){
-                  return;
-                }
-                var error = await state.renameFile(newName);
-                if (error == ""){
-                  return;
-                }
-                await showDialog(
-                  context: context,
-                  builder: (context){
-                    return ErrorDialog(error);
-                  },
-                );
-              },
+              onPressed: buildOnRename(context, fileParts, state),
             ),
             RaisedButton(
               child: Text(
@@ -166,6 +142,79 @@ class WhereUsedViewer extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+Function buildOnRename(BuildContext context, FileParts fileParts, AppState state){
+  return () async {
+    var controller = TextEditingController(text: fileParts.name);
+    var newName = await showDialog<String>(
+        context: context,
+        builder: (context){
+          return RenameDialog(controller: controller, fileParts: fileParts);
+        }
+    );
+    print("'$newName'");
+    if (newName == ""){
+      return;
+    }
+    var newPath = fileParts.newName(newName);
+    showDialog(context: context, child: BusyDialog('Renaming file...'), barrierDismissible: false);
+    var error = await state.renameFile(newPath);
+    Navigator.pop(context);
+    if (error == ""){
+      return;
+    }
+    await showDialog(
+      context: context,
+      builder: (context){
+        return ErrorDialog(error);
+      },
+    );
+  };
+}
+
+class RenameDialog extends StatelessWidget{
+  RenameDialog({this.controller, this.fileParts});
+
+  final TextEditingController controller;
+  final FileParts fileParts;
+
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: cardColor,
+      child: Padding(
+        padding: EdgeInsets.all(8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                  ),
+                ),
+                Text(fileParts.ext),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                FlatButton(
+                  child: Text("Cancel"),
+                  onPressed: ()=>Navigator.of(context).pop(''),
+                ),
+                RaisedButton(
+                  child: Text("Rename"),
+                  onPressed: ()=>Navigator.of(context).pop(controller.text),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

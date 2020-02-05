@@ -3,7 +3,7 @@ import 'package:ryx_gui/split_path.dart';
 
 main(){
   test("Split path",(){
-    var split = splitPath("C:\\Test");
+    var split = splitFolderPath("C:\\Test");
     expect(split.length, equals(3));
     expect(split[0].path, equals(""));
     expect(split[0].name, equals("root"));
@@ -14,7 +14,7 @@ main(){
   });
 
   test("Split root", (){
-    var split = splitPath("C:\\");
+    var split = splitFolderPath("C:\\");
     expect(split.length, equals(2));
     expect(split[0].path, equals(""));
     expect(split[0].name, equals("root"));
@@ -23,7 +23,7 @@ main(){
   });
 
   test("Split nothing", (){
-    var split = splitPath("");
+    var split = splitFolderPath("");
     expect(split.length, equals(1));
     expect(split[0].path, equals(""));
     expect(split[0].name, equals("root"));

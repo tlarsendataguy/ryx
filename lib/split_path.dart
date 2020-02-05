@@ -4,7 +4,7 @@ class Path{
   final String name;
 }
 
-List<Path> splitPath(String path){
+List<Path> splitFolderPath(String path){
   List<Path> splitPaths = [Path(name: 'root',path: '')];
   if (path == ''){
     return splitPaths;

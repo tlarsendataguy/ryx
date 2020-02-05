@@ -25,13 +25,13 @@ class ProjectStructure {
   }
 
   void renameFile(String oldName, String newName){
-    var found = removeFile(oldName);
+    var found = _removeFile(oldName);
     if (found){
-      addFile(newName);
+      _addFile(newName);
     }
   }
 
-  bool removeFile(String removePath){
+  bool _removeFile(String removePath){
     for (var i = 0; i < docs.length; i++){
       if (docs[i] != removePath){
         continue;
@@ -41,19 +41,19 @@ class ProjectStructure {
     }
 
     for (var folder in folders){
-      if (folder.removeFile(removePath)){
+      if (folder._removeFile(removePath)){
         return true;
       }
     }
     return false;
   }
 
-  void addFile(String addPath){
+  void _addFile(String addPath){
     var parentSplit = addPath.split("\\")..removeLast();
     var parent = parentSplit.join("\\");
     if (path != parent){
       for (var folder in folders){
-        folder.addFile(addPath);
+        folder._addFile(addPath);
       }
       return;
     }

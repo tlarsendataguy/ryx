@@ -122,6 +122,9 @@ class AppState extends BlocState{
     var response = await _communicator.renameFile(project, oldFile, newFile);
     if (response.success){
       _currentDocument.add(newFile);
+      var structure = _projectStructure.value;
+      structure.renameFile(oldFile, newFile);
+      _projectStructure.add(structure);
     }
     return response.error;
   }

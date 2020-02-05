@@ -49,7 +49,7 @@ class CurrentPathStrip extends StatelessWidget {
           currentFolder = snapshot.data;
         }
 
-        var folders = splitPath(currentFolder);
+        var folders = splitFolderPath(currentFolder);
         return Container(
           height: 30,
           child: ListView.separated(
