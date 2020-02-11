@@ -16,7 +16,11 @@ class TopBar extends StatelessWidget {
               var action = () async {
                 state.clearFolder();
                 state.browseFolder("");
-                showDialog(context: context, builder: (context) => SelectProjectDialog());
+                var project = await showDialog(context: context, builder: (context) => SelectProjectDialog());
+                if (project == null){
+                  return;
+                }
+                state.getProjectStructure(project);
               };
               if (snapshot.hasData && snapshot.data){
                 action = null;

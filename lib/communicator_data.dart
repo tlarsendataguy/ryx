@@ -31,6 +31,14 @@ class ProjectStructure {
     }
   }
 
+  ProjectStructure copyFolders(){
+    var copy = ProjectStructure(path: path, folders: [], docs: [], expanded: expanded);
+    for (var folder in folders){
+      copy.folders.add(folder.copyFolders());
+    }
+    return copy;
+  }
+
   bool _removeFile(String removePath){
     for (var i = 0; i < docs.length; i++){
       if (docs[i] != removePath){

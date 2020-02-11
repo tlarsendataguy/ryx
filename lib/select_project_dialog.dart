@@ -127,8 +127,7 @@ class ButtonsRow extends StatelessWidget {
             Function onPressed;
             if (snapshot.hasData && snapshot.data != ""){
               onPressed = (){
-                state.getProjectStructure(snapshot.data);
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(snapshot.data);
               };
             }
             return RaisedButton(

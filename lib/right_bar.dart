@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/change_paths_button.dart';
+import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/formats.dart';
 
@@ -13,6 +14,13 @@ class FileParts{
 
   String newName(String newName){
     return parent + newName + ext;
+  }
+
+  String newFolder(String newFolder){
+    if (newFolder.substring(newFolder.length-1) != "\\"){
+      newFolder += "\\";
+    }
+    return newFolder + name + ext;
   }
 
   static FileParts fromPath(String path){
@@ -34,8 +42,8 @@ class RightBar extends StatelessWidget {
         if (!snapshot.hasData || snapshot.data == "") {
           return Container();
         }
-
-        var fileParts = FileParts.fromPath(snapshot.data);
+        var currentFile = snapshot.data;
+        var fileParts = FileParts.fromPath(currentFile);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,7 +60,38 @@ class RightBar extends StatelessWidget {
                 "Move Macro",
                 overflow: TextOverflow.ellipsis,
               ),
-              onPressed: null,
+              onPressed: () async {
+                var folder = await showDialog<String>(
+                  context: context,
+                  builder: (context){
+                    return StreamBuilder(
+                      stream: state.projectStructure,
+                      builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+                        if (!snapshot.hasData){
+                          return Container();
+                        }
+                        return ChooseFolderDialog(structure: snapshot.data.copyFolders());
+                      },
+                    );
+                  },
+                );
+                if (folder == null){
+                  return;
+                }
+                var newFile = fileParts.newFolder(folder);
+                showDialog(context: context, child: BusyDialog('Moving file...'), barrierDismissible: false);
+                var error = await state.renameFile(newFile);
+                Navigator.pop(context);
+                if (error == ""){
+                  return;
+                }
+                await showDialog(
+                  context: context,
+                  builder: (context){
+                    return ErrorDialog(error);
+                  },
+                );
+              },
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             ChangePathsButton(
@@ -216,5 +255,72 @@ class RenameDialog extends StatelessWidget{
         ),
       ),
     );
+  }
+}
+
+class ChooseFolderDialog extends StatelessWidget {
+  ChooseFolderDialog({this.structure});
+
+  final ProjectStructure structure;
+
+  Widget build(BuildContext context) {
+    return Container(
+      width: 400,
+      height: 400,
+      child: Dialog(
+        backgroundColor: cardColor,
+        child: Column(
+          children: <Widget>[
+            Expanded(child: ChooseFolder(structure)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("Cancel"),
+                  onPressed: ()=>Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ChooseFolder extends StatefulWidget {
+  ChooseFolder(this.structure);
+  final ProjectStructure structure;
+  State<StatefulWidget> createState() => _ChooseFolderState();
+}
+
+class _ChooseFolderState extends State<ChooseFolder>{
+  Widget build(BuildContext context) {
+    if (widget.structure == null){
+      return Container();
+    }
+
+    var label = widget.structure.path.split("\\").last;
+    var widgets = <Widget>[
+      InkWell(
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.folder, color: folderColor),
+            Text(label),
+          ],
+        ),
+        onTap: ()=>setState(widget.structure.toggleExpanded),
+        onDoubleTap: () => Navigator.of(context).pop(widget.structure.path),
+      ),
+    ];
+
+    if (!widget.structure.expanded){
+      return Column(children: widgets);
+    }
+
+    for (var folder in widget.structure.folders) {
+      widgets.add(Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0), child: ChooseFolder(folder)));
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
   }
 }

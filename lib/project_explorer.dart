@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ryx_gui/formats.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/communicator_data.dart';
@@ -10,11 +11,6 @@ class ProjectExplorer extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ProjectExplorerState();
 }
-
-const Color folderColor = Color.fromARGB(255, 232, 194, 70);
-const Color yxwzColor = Color.fromARGB(255, 27, 63, 111);
-const Color yxmdColor = Color.fromARGB(255, 53, 168, 248);
-const Color yxmcColor = Color.fromARGB(255, 82, 89, 182);
 
 class _ProjectExplorerState extends State<ProjectExplorer> {
   _ProjectExplorerState();
