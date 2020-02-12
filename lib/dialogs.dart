@@ -25,18 +25,20 @@ class BusyDialog extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: cardColor,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            CircularProgressIndicator(),
-            Padding(
-              padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-              child: Text(message),
-            ),
-          ],
+      child: Card(
+        color: cardColor,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Padding(
+                padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                child: Text(message),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -49,18 +51,20 @@ class OkDialog extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: cardColor,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(message),
-            RaisedButton(
-              child: Text("Ok"),
-              onPressed: Navigator.of(context).pop,
-            ),
-          ],
+      child: Card(
+        color: cardColor,
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(message),
+              RaisedButton(
+                child: Text("Ok"),
+                onPressed: Navigator.of(context).pop,
+              ),
+            ],
+          ),
         ),
       ),
     );

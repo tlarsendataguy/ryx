@@ -60,38 +60,7 @@ class RightBar extends StatelessWidget {
                 "Move Macro",
                 overflow: TextOverflow.ellipsis,
               ),
-              onPressed: () async {
-                var folder = await showDialog<String>(
-                  context: context,
-                  builder: (context){
-                    return StreamBuilder(
-                      stream: state.projectStructure,
-                      builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
-                        if (!snapshot.hasData){
-                          return Container();
-                        }
-                        return ChooseFolderDialog(structure: snapshot.data.copyFolders());
-                      },
-                    );
-                  },
-                );
-                if (folder == null){
-                  return;
-                }
-                var newFile = fileParts.newFolder(folder);
-                showDialog(context: context, child: BusyDialog('Moving file...'), barrierDismissible: false);
-                var error = await state.renameFile(newFile);
-                Navigator.pop(context);
-                if (error == ""){
-                  return;
-                }
-                await showDialog(
-                  context: context,
-                  builder: (context){
-                    return ErrorDialog(error);
-                  },
-                );
-              },
+              onPressed: buildOnMove(context, fileParts, state),
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
             ChangePathsButton(
@@ -214,6 +183,41 @@ Function buildOnRename(BuildContext context, FileParts fileParts, AppState state
   };
 }
 
+Function buildOnMove(BuildContext context, FileParts fileParts, AppState state){
+  return () async {
+    var folder = await showDialog<String>(
+      context: context,
+      builder: (context){
+        return StreamBuilder(
+          stream: state.projectStructure,
+          builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+            if (!snapshot.hasData){
+              return Container();
+            }
+            return ChooseFolderDialog(structure: snapshot.data.copyFolders());
+          },
+        );
+      },
+    );
+    if (folder == null){
+      return;
+    }
+    var newFile = fileParts.newFolder(folder);
+    showDialog(context: context, child: BusyDialog('Moving file...'), barrierDismissible: false);
+    var error = await state.renameFile(newFile);
+    Navigator.pop(context);
+    if (error == ""){
+      return;
+    }
+    await showDialog(
+      context: context,
+      builder: (context){
+        return ErrorDialog(error);
+      },
+    );
+  };
+}
+
 class RenameDialog extends StatelessWidget{
   RenameDialog({this.controller, this.fileParts});
 
@@ -222,34 +226,45 @@ class RenameDialog extends StatelessWidget{
 
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: cardColor,
-      child: Padding(
-        padding: EdgeInsets.all(8),
+      child: Container(
+        width: 600,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                  ),
+            Card(
+              color: cardColor,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                      ),
+                    ),
+                    Text(fileParts.ext),
+                  ],
                 ),
-                Text(fileParts.ext),
-              ],
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                FlatButton(
-                  child: Text("Cancel"),
-                  onPressed: ()=>Navigator.of(context).pop(''),
+            Card(
+              color: cardColor,
+              child: Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: ()=>Navigator.of(context).pop(''),
+                    ),
+                    RaisedButton(
+                      child: Text("Rename"),
+                      onPressed: ()=>Navigator.of(context).pop(controller.text),
+                    ),
+                  ],
                 ),
-                RaisedButton(
-                  child: Text("Rename"),
-                  onPressed: ()=>Navigator.of(context).pop(controller.text),
-                ),
-              ],
+              ),
             ),
           ],
         ),
@@ -264,22 +279,38 @@ class ChooseFolderDialog extends StatelessWidget {
   final ProjectStructure structure;
 
   Widget build(BuildContext context) {
-    return Container(
-      width: 400,
-      height: 400,
-      child: Dialog(
-        backgroundColor: cardColor,
-        child: Column(
+    return Dialog(
+        child: Container(
+          width: 600,
+          height: 600,
+          child:  Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Expanded(child: ChooseFolder(structure)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                RaisedButton(
-                  child: Text("Cancel"),
-                  onPressed: ()=>Navigator.of(context).pop(),
+            Expanded(
+              child: Card(
+                color: cardColor,
+                child: ListView(
+                  padding: EdgeInsets.all(8.0),
+                  children: [
+                    ChooseFolder(structure),
+                  ],
                 ),
-              ],
+              ),
+            ),
+            Card(
+              color: cardColor,
+              child: Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: ()=>Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

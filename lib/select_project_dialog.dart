@@ -7,9 +7,10 @@ import 'package:ryx_gui/formats.dart';
 
 class SelectProjectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 700),
-      child: Dialog(
+    return Dialog(
+      child: Container(
+        height: 600,
+        width: 600,
         child: SelectProjectDialogStructure(
           currentPathStrip: CurrentPathStrip(),
           folderSelector: FolderSelector(),
@@ -30,9 +31,29 @@ class SelectProjectDialogStructure extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Card(child: currentPathStrip, color: cardColor),
-        Expanded(child: Card(child: folderSelector, color: cardColor)),
-        Card(child: buttons, color: cardColor)
+        Card(
+          child: Padding(
+            child: currentPathStrip, 
+            padding: EdgeInsets.all(2.0),
+          ),
+          color: cardColor,
+        ),
+        Expanded(
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: folderSelector,
+            ),
+            color: cardColor,
+          ),
+        ),
+        Card(
+          child: Padding(
+            padding: EdgeInsets.all(2.0),
+            child: buttons,
+          ),
+          color: cardColor,
+        ),
       ],
     );
   }
