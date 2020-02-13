@@ -18,11 +18,19 @@ class CenterContent extends StatelessWidget {
             StreamBuilder(
               stream: state.currentDocument,
               builder: (context, AsyncSnapshot<String> snapshot){
-                var text = "";
-                if (snapshot.hasData) {
-                  text = snapshot.data.split("\\").last;
+                if (snapshot.hasData && snapshot.data != "") {
+                  var text = snapshot.data.split("\\").last;
+                  return Row(
+                    children: <Widget>[
+                      Text(text),
+                      IconButton(
+                        icon: Icon(Icons.refresh),
+                        onPressed: () async => await state.getDocumentStructure(snapshot.data),
+                      ),
+                    ],
+                  );
                 }
-                return Text(text);
+                return Text("");
               },
             ),
             Expanded(child: WorkflowViewer()),

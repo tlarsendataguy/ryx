@@ -74,6 +74,21 @@ main(){
     expect(error, equals(""));
   });
 
+  test("Get document structure multiple times", () async {
+    var state = AppState(MockSuccessIo());
+    expect(state.documentStructure, emitsInOrder([isNull, isNotNull]));
+    expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah"), equals("Blah2")]));
+    expect(state.isLoadingDocument, emitsInOrder([false, true, false, true, false]));
+    expect(state.whereUsed, emitsInOrder([[], ["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"],["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"]]));
+    expect(state.isLoadingWhereUsed, emitsInOrder([false, true, false, true, false]));
+
+    await state.getProjectStructure("project");
+    var error = await state.getDocumentStructure("Blah");
+    expect(error, equals(""));
+    error = await state.getDocumentStructure("Blah2");
+    expect(error, equals(""));
+  });
+
   test("Get document structure error", () async {
     var state = AppState(MockValidProjectInvalidOthers());
     expect(state.currentDocument, emits(""));

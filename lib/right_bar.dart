@@ -137,8 +137,8 @@ class WhereUsedViewer extends StatelessWidget {
                       itemBuilder: (context, index) {
                         return InkWell(
                           child: Text(snapshot.data[index]),
-                          onDoubleTap: () =>
-                              state.getDocumentStructure(snapshot.data[index]),
+                          onDoubleTap: () async =>
+                              await state.getDocumentStructure(snapshot.data[index]),
                         );
                       },
                     );

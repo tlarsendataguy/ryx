@@ -38,6 +38,19 @@ class AppState extends BlocState{
   var _isLoadingDocument = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isLoadingDocument => _isLoadingDocument.stream;
 
+  var _loadingWhereUsedProcesses = 0;
+  void _incrementWhereUsedProcesses(){
+    _loadingWhereUsedProcesses++;
+    _calculateIsLoadingWhereUsed();
+  }
+  void _decrementWhereUsedProcesses(){
+    _loadingWhereUsedProcesses--;
+    _calculateIsLoadingWhereUsed();
+  }
+  void _calculateIsLoadingWhereUsed(){
+    var isLoading = _loadingWhereUsedProcesses != 0;
+    _isLoadingWhereUsed.add(isLoading);
+  }
   var _isLoadingWhereUsed = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isLoadingWhereUsed => _isLoadingWhereUsed.stream;
 
@@ -88,7 +101,7 @@ class AppState extends BlocState{
     }
     _isLoadingDocument.add(false);
     error = await _processWhereUsed(project, document);
-    _isLoadingWhereUsed.add(false);
+    _decrementWhereUsedProcesses();
     return error;
   }
 
@@ -164,7 +177,11 @@ class AppState extends BlocState{
 
   void _setLoadingDocStructure(bool value){
     _isLoadingDocument.add(value);
-    _isLoadingWhereUsed.add(value);
+    if (value){
+      _incrementWhereUsedProcesses();
+    } else {
+      _decrementWhereUsedProcesses();
+    }
   }
 
   Future initialize() async {
