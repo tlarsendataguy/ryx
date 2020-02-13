@@ -48,7 +48,7 @@ class TopBar extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(Icons.refresh),
-                    onPressed: null,
+                    onPressed: () => state.getProjectStructure(snapshot.data),
                   ),
                 ],
               );
