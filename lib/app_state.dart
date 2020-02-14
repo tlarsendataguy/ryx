@@ -3,6 +3,8 @@ import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/bloc_state.dart';
 import 'package:rxdart/rxdart.dart';
 
+const String loadingNew = "Another doc is loading";
+
 class AppState extends BlocState{
   AppState(Io io){
     _communicator = Communicator(io);
@@ -35,6 +37,20 @@ class AppState extends BlocState{
   var _whereUsed = BehaviorSubject<List<String>>.seeded([]);
   Stream<List<String>> get whereUsed => _whereUsed.stream;
 
+  var _loadingDocumentProcesses = 0;
+  bool _incrementDocumentProcesses(){
+    _loadingDocumentProcesses++;
+    return _calculateIsLoadingDocument();
+  }
+  bool _decrementDocumentProcesses(){
+    _loadingDocumentProcesses--;
+    return _calculateIsLoadingDocument();
+  }
+  bool _calculateIsLoadingDocument(){
+    var isLoading = _loadingDocumentProcesses != 0;
+    _isLoadingDocument.add(isLoading);
+    return isLoading;
+  }
   var _isLoadingDocument = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isLoadingDocument => _isLoadingDocument.stream;
 
@@ -95,12 +111,15 @@ class AppState extends BlocState{
       return "no project was open";
     }
     var error = await _processDoc(project, document);
+    if (error == loadingNew){
+      _decrementWhereUsedProcesses();
+      return '';
+    }
     if (error != ""){
       _whereUsed.add([]);
       _setLoadingDocStructure(false);
       return error;
     }
-    _isLoadingDocument.add(false);
     error = await _processWhereUsed(project, document);
     _decrementWhereUsedProcesses();
     return error;
@@ -162,6 +181,10 @@ class AppState extends BlocState{
     if (!getDoc.success){
       return getDoc.error;
     }
+    var isLoading = _decrementDocumentProcesses();
+    if (isLoading){
+      return loadingNew;
+    }
     _documentStructure.add(getDoc.value);
     _currentDocument.add(document);
     return "";
@@ -177,11 +200,12 @@ class AppState extends BlocState{
   }
 
   void _setLoadingDocStructure(bool value){
-    _isLoadingDocument.add(value);
     if (value){
       _incrementWhereUsedProcesses();
+      _incrementDocumentProcesses();
     } else {
       _decrementWhereUsedProcesses();
+      _decrementDocumentProcesses();
     }
   }
 
