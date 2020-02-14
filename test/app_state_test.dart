@@ -54,7 +54,7 @@ main(){
   test("Loading project clears current document",() async {
     var state = AppState(MockSuccessIo());
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull, isNull]));
-    expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah"), equals("")]));
+    expect(state.currentDocument, emitsInOrder([equals(""), equals(""), equals("Blah"), equals("")]));
     expect(state.whereUsed, emitsInOrder([[],["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"], []]));
     await state.getProjectStructure('project1');
     await state.getDocumentStructure("Blah");
@@ -64,7 +64,7 @@ main(){
   test("Get document structure", () async {
     var state = AppState(MockSuccessIo());
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull]));
-    expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah")]));
+    expect(state.currentDocument, emitsInOrder([equals(""), equals(""), equals("Blah")]));
     expect(state.isLoadingDocument, emitsInOrder([false, true, false]));
     expect(state.whereUsed, emitsInOrder([[], ["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"]]));
     expect(state.isLoadingWhereUsed, emitsInOrder([false, true, false]));
@@ -77,7 +77,7 @@ main(){
   test("Get document structure multiple times", () async {
     var state = AppState(MockSuccessIo());
     expect(state.documentStructure, emitsInOrder([isNull, isNotNull]));
-    expect(state.currentDocument, emitsInOrder([equals(""), equals("Blah"), equals("Blah2")]));
+    expect(state.currentDocument, emitsInOrder([equals(""), equals(""), equals("Blah"), equals(""), equals("Blah2")]));
     expect(state.isLoadingDocument, emitsInOrder([false, true, false, true, false]));
     expect(state.whereUsed, emitsInOrder([[], ["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"],["C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing\\01 SETLEAF Equations Completed.yxmd"]]));
     expect(state.isLoadingWhereUsed, emitsInOrder([false, true, false, true, false]));
@@ -135,7 +135,7 @@ main(){
 
   test("Rename file",() async {
     var state = AppState(MockSuccessIo());
-    expect(state.currentDocument, emitsInOrder(['','Old File', 'New File']));
+    expect(state.currentDocument, emitsInOrder(['','', 'Old File', 'New File']));
     await state.getProjectStructure('project');
     await state.getDocumentStructure('Old File');
     var error = await state.renameFile('New File');

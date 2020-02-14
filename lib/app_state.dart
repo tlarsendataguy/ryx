@@ -87,6 +87,7 @@ class AppState extends BlocState{
   }
 
   Future<String> getDocumentStructure(String document) async {
+    _currentDocument.add("");
     _setLoadingDocStructure(true);
     var project = _currentProject.value;
     if (project == ''){
