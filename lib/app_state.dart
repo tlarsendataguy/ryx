@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:ryx_gui/communicator.dart';
 import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/bloc_state.dart';
@@ -73,6 +75,10 @@ class AppState extends BlocState{
   var _documentStructure = BehaviorSubject<DocumentStructure>.seeded(null);
   Stream<DocumentStructure> get documentStructure => _documentStructure.stream;
 
+  var _hasSelectedExplorer = BehaviorSubject<bool>.seeded(false);
+  Stream<bool> get hasSelectedExplorer => _hasSelectedExplorer.distinct();
+  HashSet<String> selectedExplorer = HashSet<String>();
+
   Future<String> browseFolder(String root) async {
     var response = await _communicator.browseFolder(root);
     if (response.success){
@@ -84,6 +90,7 @@ class AppState extends BlocState{
 
   Future<String> getProjectStructure(String project) async {
     _isLoadingProject.add(true);
+    deselectAllExplorer();
     _unloadDocument();
     var toolDataResponse = await _communicator.getToolData();
     if (!toolDataResponse.success){
@@ -167,6 +174,23 @@ class AppState extends BlocState{
     _folders.add(null);
   }
 
+  void selectExplorer(String item){
+    selectedExplorer.add(item);
+    _hasSelectedExplorer.add(true);
+  }
+
+  void deselectExplorer(String item){
+    selectedExplorer.remove(item);
+    if (selectedExplorer.length == 0) {
+      _hasSelectedExplorer.add(false);
+    }
+  }
+
+  void deselectAllExplorer(){
+    selectedExplorer.clear();
+    _hasSelectedExplorer.add(false);
+  }
+
   void _unloadDocument(){
     if (_currentDocument.value == ""){
       return;
@@ -225,5 +249,6 @@ class AppState extends BlocState{
     _isLoadingWhereUsed.close();
     _documentStructure.close();
     _toolData.close();
+    _hasSelectedExplorer.close();
   }
 }

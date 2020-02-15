@@ -9,14 +9,27 @@ class Response<T> {
   final String error;
 }
 
-class ProjectStructure {
-  ProjectStructure({this.path, this.folders, this.docs, bool expanded = false}) :
+abstract class Selectable {
+  bool _selected = false;
+  bool get selected => _selected;
+
+  bool toggleSelected(){
+    _selected = !_selected;
+    return _selected;
+  }
+
+  void deselect() => _selected = false;
+}
+
+class ProjectStructure extends Selectable {
+  ProjectStructure({this.path, this.folders, this.docs, bool expanded = false, bool selected = false}) :
         assert(path != null && folders != null && docs != null) {
     _expanded = expanded;
+    _selected = selected;
   }
   final String path;
   final List<ProjectStructure> folders;
-  final List<String> docs;
+  final List<ProjectStructureDoc> docs;
   bool _expanded;
   bool get expanded => _expanded;
 
@@ -41,7 +54,7 @@ class ProjectStructure {
 
   bool _removeFile(String removePath){
     for (var i = 0; i < docs.length; i++){
-      if (docs[i] != removePath){
+      if (docs[i].path != removePath){
         continue;
       }
       docs.removeAt(i);
@@ -65,9 +78,16 @@ class ProjectStructure {
       }
       return;
     }
-    docs.add(addPath);
-    docs.sort();
+    docs.add(ProjectStructureDoc(path: addPath));
+    docs.sort((doc1, doc2)=> doc1.path.compareTo(doc2.path));
   }
+}
+
+class ProjectStructureDoc extends Selectable {
+  ProjectStructureDoc({this.path});
+  final String path;
+  String get label => path.split("\\").last;
+  String get ext => path.split(".").last;
 }
 
 class DocumentStructure {

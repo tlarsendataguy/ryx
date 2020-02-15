@@ -127,9 +127,9 @@ class Communicator{
     for (var folder in data['Folders']){
       folders.add(await _buildProjectStructure(folder));
     }
-    var docs = List<String>();
+    var docs = List<ProjectStructureDoc>();
     for (var doc in data['Docs']){
-      docs.add(doc as String);
+      docs.add(ProjectStructureDoc(path: doc as String));
     }
     return ProjectStructure(path: path, folders: folders, docs: docs);
   }

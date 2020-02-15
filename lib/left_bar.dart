@@ -62,13 +62,6 @@ class LeftBar extends StatelessWidget {
                   changePathsAction: state.makeAllAbsolute,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                RaisedButton(
-                  child: Text(
-                    "Move selected files",
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  onPressed: null,
-                ),
               ],
             );
           },

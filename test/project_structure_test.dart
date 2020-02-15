@@ -12,19 +12,19 @@ main(){
   test("Rename file",(){
     var structure = generateSampleStructure();
     structure.renameFile("C:\\Library\\Folder1\\Doc1_1", "C:\\Library\\Folder1\\NewName");
-    expect(structure.folders[0].docs[0], equals("C:\\Library\\Folder1\\Doc1_2"));
-    expect(structure.folders[0].docs[1], equals("C:\\Library\\Folder1\\NewName"));
+    expect(structure.folders[0].docs[0].path, equals("C:\\Library\\Folder1\\Doc1_2"));
+    expect(structure.folders[0].docs[1].path, equals("C:\\Library\\Folder1\\NewName"));
   });
 
   test("Move file", (){
     var structure = generateSampleStructure();
     structure.renameFile("C:\\Library\\Folder1\\Doc1_1", "C:\\Library\\Folder2\\Doc1_1");
     expect(structure.folders[0].docs.length, equals(1));
-    expect(structure.folders[0].docs[0], equals("C:\\Library\\Folder1\\Doc1_2"));
+    expect(structure.folders[0].docs[0].path, equals("C:\\Library\\Folder1\\Doc1_2"));
     expect(structure.folders[1].docs.length, equals(3));
-    expect(structure.folders[1].docs[0], equals("C:\\Library\\Folder2\\Doc1_1"));
-    expect(structure.folders[1].docs[1], equals("C:\\Library\\Folder2\\Doc2_1"));
-    expect(structure.folders[1].docs[2], equals("C:\\Library\\Folder2\\Doc2_2"));
+    expect(structure.folders[1].docs[0].path, equals("C:\\Library\\Folder2\\Doc1_1"));
+    expect(structure.folders[1].docs[1].path, equals("C:\\Library\\Folder2\\Doc2_1"));
+    expect(structure.folders[1].docs[2].path, equals("C:\\Library\\Folder2\\Doc2_2"));
   });
 
   test("Rename file that does not exist", (){
@@ -43,16 +43,16 @@ ProjectStructure generateSampleStructure(){
       ProjectStructure(
         path: "C:\\Library\\Folder1",
         docs: [
-          "C:\\Library\\Folder1\\Doc1_1",
-          "C:\\Library\\Folder1\\Doc1_2",
+          ProjectStructureDoc(path: "C:\\Library\\Folder1\\Doc1_1"),
+          ProjectStructureDoc(path: "C:\\Library\\Folder1\\Doc1_2"),
         ],
         folders: [],
       ),
       ProjectStructure(
         path: "C:\\Library\\Folder2",
         docs: [
-          "C:\\Library\\Folder2\\Doc2_1",
-          "C:\\Library\\Folder2\\Doc2_2",
+          ProjectStructureDoc(path: "C:\\Library\\Folder2\\Doc2_1"),
+          ProjectStructureDoc(path: "C:\\Library\\Folder2\\Doc2_2"),
         ],
         folders: [],
       ),

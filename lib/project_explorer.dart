@@ -19,17 +19,28 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
     if (widget.structure == null){
       return Container();
     }
-
+    var state = BlocProvider.of<AppState>(context);
     var label = widget.structure.path.split("\\").last;
     var widgets = <Widget>[
       InkWell(
-        child: Row(
-          children: <Widget>[
-            Icon(Icons.folder, color: folderColor),
-            Text(label),
-          ],
+        child:Container(
+          color: widget.structure.selected ? Colors.lightBlue : Colors.transparent,
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.folder, color: folderColor),
+              Text(label),
+            ],
+          ),
         ),
         onDoubleTap: ()=>setState(widget.structure.toggleExpanded),
+        onTap: ()=>setState((){
+          var selected = widget.structure.toggleSelected();
+          if (selected){
+            state.selectExplorer(widget.structure.path);
+          } else {
+            state.deselectExplorer(widget.structure.path);
+          }
+        }),
       ),
     ];
 
@@ -37,49 +48,71 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
       return Column(children: widgets);
     }
 
-    var state = BlocProvider.of<AppState>(context);
     for (var folder in widget.structure.folders) {
       widgets.add(Padding(padding: EdgeInsets.fromLTRB(8, 0, 0, 0), child: ProjectExplorer(structure: folder)));
     }
-    for (var file in widget.structure.docs) {
-      var label = file.split("\\").last;
-      var ext = file.split(".").last;
-      Color color;
-      switch (ext){
-        case 'yxmd':
-          color = yxmdColor;
-          break;
-        case 'yxmc':
-          color = yxmcColor;
-          break;
-        case 'yxwz':
-          color = yxwzColor;
-          break;
-        default:
-          color = Colors.black;
-          break;
-      }
-
+    for (var doc in widget.structure.docs) {
       widgets.add(
           Padding(
             padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-            child: InkWell(
-              onDoubleTap: () async {
-                var error = await state.getDocumentStructure(file);
-                if (error != ''){
-                  showDialog(context: context, child: ErrorDialog(error));
-                }
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.description, color: color),
-                  Text(label),
-                ],
-              ),
-            ),
+            child: FileExplorer(doc: doc),
           ),
       );
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
+  }
+}
+
+class FileExplorer extends StatefulWidget {
+  FileExplorer({this.doc});
+  final ProjectStructureDoc doc;
+  State<StatefulWidget> createState() => _FileExplorerState();
+}
+
+class _FileExplorerState extends State<FileExplorer> {
+
+  Widget build(BuildContext context) {
+    var state = BlocProvider.of<AppState>(context);
+    Color color;
+    switch (widget.doc.ext){
+      case 'yxmd':
+        color = yxmdColor;
+        break;
+      case 'yxmc':
+        color = yxmcColor;
+        break;
+      case 'yxwz':
+        color = yxwzColor;
+        break;
+      default:
+        color = Colors.black;
+        break;
+    }
+
+    return InkWell(
+      onDoubleTap: () async {
+        var error = await state.getDocumentStructure(widget.doc.path);
+        if (error != ''){
+          showDialog(context: context, child: ErrorDialog(error));
+        }
+      },
+      onTap: () => setState((){
+        var selected = widget.doc.toggleSelected();
+        if (selected){
+          state.selectExplorer(widget.doc.path);
+        } else {
+          state.deselectExplorer(widget.doc.path);
+        }
+      }),
+      child: Container(
+        color: widget.doc.selected ? Colors.lightBlue : Colors.transparent,
+        child: Row(
+          children: [
+            Icon(Icons.description, color: color),
+            Text(widget.doc.label),
+          ],
+        ),
+      ),
+    );
   }
 }
