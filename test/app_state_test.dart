@@ -190,4 +190,14 @@ main() {
     await state.getProjectStructure("project");
     expect(state.selectedExplorer.length, equals(0));
   });
+
+  test("Select and deselect lists of files/folders", () async {
+    var state = AppState(MockSuccessIo());
+    expect(state.hasSelectedExplorer, emitsInOrder([false, true,  false]));
+    expect(state.selectedExplorer.length, equals(0));
+    state.selectExplorerList(['blah1','blah2']);
+    expect(state.selectedExplorer.length, equals(2));
+    state.deselectExplorerList(['blah1','blah2']);
+    expect(state.selectedExplorer.length, equals(0));
+  });
 }

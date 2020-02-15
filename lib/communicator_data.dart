@@ -19,6 +19,7 @@ abstract class Selectable {
   }
 
   void deselect() => _selected = false;
+  void select() => _selected = true;
 }
 
 class ProjectStructure extends Selectable {
@@ -42,6 +43,37 @@ class ProjectStructure extends Selectable {
     if (found){
       _addFile(newName);
     }
+  }
+
+  void selectAllDocsRecursive(){
+    for (var folder in folders){
+      folder.select();
+      folder.selectAllDocsRecursive();
+    }
+    for (var doc in docs){
+      doc.select();
+    }
+  }
+
+  void deselectAllDocsRecursive(){
+    for (var folder in folders){
+      folder.deselect();
+      folder.deselectAllDocsRecursive();
+    }
+    for (var doc in docs){
+      doc.deselect();
+    }
+  }
+
+  List<String> getAllDocsRecursive(){
+    var allDocs = List<String>();
+    for (var doc in docs){
+      allDocs.add(doc.path);
+    }
+    for (var folder in folders){
+      allDocs.addAll(folder.getAllDocsRecursive());
+    }
+    return allDocs;
   }
 
   ProjectStructure copyFolders(){

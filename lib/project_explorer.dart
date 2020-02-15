@@ -23,22 +23,22 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
     var label = widget.structure.path.split("\\").last;
     var widgets = <Widget>[
       InkWell(
-        child:Container(
-          color: widget.structure.selected ? Colors.lightBlue : Colors.transparent,
-          child: Row(
-            children: <Widget>[
-              Icon(Icons.folder, color: folderColor),
-              Text(label),
-            ],
-          ),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.folder, color: folderColor),
+            Text(label),
+          ],
         ),
         onDoubleTap: ()=>setState(widget.structure.toggleExpanded),
         onTap: ()=>setState((){
+          var allDocs = widget.structure.getAllDocsRecursive();
           var selected = widget.structure.toggleSelected();
           if (selected){
-            state.selectExplorer(widget.structure.path);
+            widget.structure.selectAllDocsRecursive();
+            state.selectExplorerList(allDocs);
           } else {
-            state.deselectExplorer(widget.structure.path);
+            widget.structure.deselectAllDocsRecursive();
+            state.deselectExplorerList(allDocs);
           }
         }),
       ),
@@ -105,7 +105,7 @@ class _FileExplorerState extends State<FileExplorer> {
         }
       }),
       child: Container(
-        color: widget.doc.selected ? Colors.lightBlue : Colors.transparent,
+        color: widget.doc.selected ? Color.fromARGB(25, 0, 0, 150) : Colors.transparent,
         child: Row(
           children: [
             Icon(Icons.description, color: color),

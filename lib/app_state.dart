@@ -181,14 +181,28 @@ class AppState extends BlocState{
 
   void deselectExplorer(String item){
     selectedExplorer.remove(item);
-    if (selectedExplorer.length == 0) {
-      _hasSelectedExplorer.add(false);
-    }
+    _markIfSelectedExplorerIsEmpty();
   }
 
   void deselectAllExplorer(){
     selectedExplorer.clear();
     _hasSelectedExplorer.add(false);
+  }
+
+  void selectExplorerList(Iterable<String> items){
+    selectedExplorer.addAll(items);
+    _hasSelectedExplorer.add(true);
+  }
+
+  void deselectExplorerList(Iterable<String> items){
+    selectedExplorer.removeAll(items);
+    _markIfSelectedExplorerIsEmpty();
+  }
+
+  void _markIfSelectedExplorerIsEmpty(){
+    if (selectedExplorer.length == 0) {
+      _hasSelectedExplorer.add(false);
+    }
   }
 
   void _unloadDocument(){
