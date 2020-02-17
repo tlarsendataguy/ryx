@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/change_paths_button.dart';
+import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/project_explorer.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/communicator_data.dart';
+import 'package:ryx_gui/right_bar.dart';
 
 class LeftBar extends StatelessWidget {
   final verticalScroll = ScrollController();
@@ -44,6 +46,59 @@ class LeftBar extends StatelessWidget {
                       ),
                     ),
                   ),
+                ),
+                StreamBuilder(
+                  stream: state.hasSelectedExplorer,
+                  builder: (context, AsyncSnapshot<bool> explorerSnapshot){
+                    if (!explorerSnapshot.hasData || !explorerSnapshot.data){
+                      return Container();
+                    }
+                    return Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: RaisedButton(
+                            child: Text("Deselect all"),
+                            onPressed: state.deselectAllExplorer,
+                          ),
+                        ),
+                        Expanded(
+                          child: RaisedButton(
+                            child: Text("Move files..."),
+                            onPressed: () async {
+                              var folder = await showDialog<String>(
+                                context: context,
+                                builder: (context){
+                                  return StreamBuilder(
+                                    stream: state.projectStructure,
+                                    builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+                                      if (!snapshot.hasData){
+                                        return Container();
+                                      }
+                                      return ChooseFolderDialog(structure: snapshot.data.copyFolders());
+                                    },
+                                  );
+                                },
+                              );
+                              if (folder == null){
+                                return;
+                              }
+                              showDialog(context: context, child: BusyDialog('Moving files...'), barrierDismissible: false);
+                              var response = await state.moveFiles(folder);
+                              Navigator.of(context).pop();
+                              if (!response.success){
+                                await showDialog(context: context, child: OkDialog(response.error));
+                                return;
+                              }
+                              if (response.value.length > 0) {
+                                await showDialog(context: context, child: OkDialog("${response.value.length} files could not be moved"));
+                                return;
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 ChangePathsButton(
                   child: Text(

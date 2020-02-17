@@ -137,6 +137,13 @@ main(){
     var response = await communicator.renameFile('Project', 'macro', 'macro2');
     expect(response.success, isTrue);
   });
+
+  test("move files", () async {
+    var communicator = Communicator(validIo);
+    var response = await communicator.moveFiles('Project', ['file1','file2'],'move\\to\\folder');
+    expect(response.success, isTrue);
+    expect(response.value.length, equals(1));
+  });
 }
 
 

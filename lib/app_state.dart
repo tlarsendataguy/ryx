@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:ryx_gui/communicator.dart';
@@ -77,6 +78,8 @@ class AppState extends BlocState{
 
   var _hasSelectedExplorer = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get hasSelectedExplorer => _hasSelectedExplorer.distinct();
+  var _allDeselected = BehaviorSubject<void>();
+  Stream<void> get allDeselected => _allDeselected.stream;
   HashSet<String> selectedExplorer = HashSet<String>();
 
   Future<String> browseFolder(String root) async {
@@ -90,7 +93,7 @@ class AppState extends BlocState{
 
   Future<String> getProjectStructure(String project) async {
     _isLoadingProject.add(true);
-    deselectAllExplorer();
+    _removeExplorerSelection();
     _unloadDocument();
     var toolDataResponse = await _communicator.getToolData();
     if (!toolDataResponse.success){
@@ -132,28 +135,28 @@ class AppState extends BlocState{
     return error;
   }
 
-  Future<int> makeMacroAbsolute(String macro) async {
+  Future<Response<int>> makeMacroAbsolute(String macro) async {
     var project = _currentProject.value;
     var response = await _communicator.makeMacroAbsolute(project, macro);
-    return response.value;
+    return response;
   }
 
-  Future<int> makeAllAbsolute() async {
+  Future<Response<int>> makeAllAbsolute() async {
     var project = _currentProject.value;
     var response = await _communicator.makeAllAbsolute(project);
-    return response.value;
+    return response;
   }
 
-  Future<int> makeMacroRelative(String macro) async {
+  Future<Response<int>> makeMacroRelative(String macro) async {
     var project = _currentProject.value;
     var response = await _communicator.makeMacroRelative(project, macro);
-    return response.value;
+    return response;
   }
 
-  Future<int> makeAllRelative() async {
+  Future<Response<int>> makeAllRelative() async {
     var project = _currentProject.value;
     var response = await _communicator.makeAllRelative(project);
-    return response.value;
+    return response;
   }
 
   Future<String> renameFile(String newFile) async {
@@ -167,6 +170,27 @@ class AppState extends BlocState{
       _projectStructure.add(structure);
     }
     return response.error;
+  }
+
+  Future<Response<List<String>>> moveFiles(String moveTo) async {
+    var project = _currentProject.value;
+    var files = selectedExplorer.toList();
+    var response = await _communicator.moveFiles(project, files, moveTo);
+    if (response.success){
+      var structure = _projectStructure.value;
+      for (var file in files){
+        if (response.value.contains(file)){
+          continue;
+        }
+        var name = file.split("\\").last;
+        var newFile = moveTo + "\\" + name;
+        structure.renameFile(file, newFile);
+      }
+      structure.deselectAllDocsRecursive();
+      _removeExplorerSelection();
+      _projectStructure.add(structure);
+    }
+    return response;
   }
 
   void clearFolder() async {
@@ -185,8 +209,12 @@ class AppState extends BlocState{
   }
 
   void deselectAllExplorer(){
-    selectedExplorer.clear();
-    _hasSelectedExplorer.add(false);
+    var project = _projectStructure.value;
+    if (project != null){
+      project.deselectAllDocsRecursive();
+    }
+    _removeExplorerSelection();
+    _allDeselected.add(null);
   }
 
   void selectExplorerList(Iterable<String> items){
@@ -197,6 +225,11 @@ class AppState extends BlocState{
   void deselectExplorerList(Iterable<String> items){
     selectedExplorer.removeAll(items);
     _markIfSelectedExplorerIsEmpty();
+  }
+
+  void _removeExplorerSelection(){
+    selectedExplorer.clear();
+    _hasSelectedExplorer.add(false);
   }
 
   void _markIfSelectedExplorerIsEmpty(){
@@ -264,5 +297,6 @@ class AppState extends BlocState{
     _documentStructure.close();
     _toolData.close();
     _hasSelectedExplorer.close();
+    _allDeselected.close();
   }
 }

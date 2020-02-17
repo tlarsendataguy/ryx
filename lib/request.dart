@@ -4,7 +4,7 @@ class Request {
   Request({this.function, this.project = "", this.parameters});
   final String function;
   final String project;
-  final Map<String, String> parameters;
+  final Map<String, Object> parameters;
 
   String toJson(){
     return jsonEncode({

@@ -138,25 +138,29 @@ main() {
   test("Make macro absolute", () async {
     var state = AppState(MockSuccessIo());
     var changed = await state.makeMacroAbsolute('some macro');
-    expect(changed, equals(1));
+    expect(changed.success, isTrue);
+    expect(changed.value, equals(1));
   });
 
   test("Make all macros absolute", () async {
     var state = AppState(MockSuccessIo());
     var changed = await state.makeAllAbsolute();
-    expect(changed, equals(2));
+    expect(changed.success, isTrue);
+    expect(changed.value, equals(2));
   });
 
   test("Make macro relative", () async {
     var state = AppState(MockSuccessIo());
     var changed = await state.makeMacroRelative('some macro');
-    expect(changed, equals(3));
+    expect(changed.success, isTrue);
+    expect(changed.value, equals(3));
   });
 
   test("Make all macros relative", () async {
     var state = AppState(MockSuccessIo());
     var changed = await state.makeAllRelative();
-    expect(changed, equals(4));
+    expect(changed.success, isTrue);
+    expect(changed.value, equals(4));
   });
 
   test("Rename file", () async {
@@ -172,6 +176,7 @@ main() {
   test("Select and deselect files/folders", () async {
     var state = AppState(MockSuccessIo());
     expect(state.hasSelectedExplorer, emitsInOrder([false, true,  false, true, false]));
+    expect(state.allDeselected, emitsInOrder([null]));
     expect(state.selectedExplorer.length, equals(0));
     state.selectExplorer('blah');
     expect(state.selectedExplorer.length, equals(1));
@@ -199,5 +204,15 @@ main() {
     expect(state.selectedExplorer.length, equals(2));
     state.deselectExplorerList(['blah1','blah2']);
     expect(state.selectedExplorer.length, equals(0));
+  });
+
+  test("Move selected files",() async {
+    var state = AppState(MockSuccessIo());
+    expect(state.projectStructure, emitsInOrder([null, isNotNull, isNotNull]));
+
+    await state.getProjectStructure('project');
+    state.selectExplorerList(['blah1','blah2']);
+    var response = await state.moveFiles('some\\other\\folder');
+    expect(response.value.length, equals(1));
   });
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/dialogs.dart';
+import 'package:ryx_gui/communicator_data.dart';
 
-typedef Future<int> ChangePathsAction();
+typedef Future<Response<int>> ChangePathsAction();
 
 class ChangePathsButton extends StatelessWidget{
   ChangePathsButton({this.child, this.changePathsAction, this.busyMessage, this.materialTapTargetSize});
@@ -21,10 +22,17 @@ class ChangePathsButton extends StatelessWidget{
         );
         var changed = await changePathsAction();
         Navigator.of(context).pop();
-        await showDialog(
-          context: context,
-          child: OkDialog("$changed workflows updated"),
-        );
+        if (changed.success){
+          await showDialog(
+            context: context,
+            child: OkDialog("${changed.value} workflows updated"),
+          );
+        } else {
+          await showDialog(
+            context: context,
+            child: OkDialog("Error: ${changed.error}"),
+          );
+        }
       },
     );
   }

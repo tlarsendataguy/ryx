@@ -59,7 +59,10 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
           ),
       );
     }
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: widgets);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: widgets,
+    );
   }
 }
 
@@ -89,30 +92,36 @@ class _FileExplorerState extends State<FileExplorer> {
         break;
     }
 
-    return InkWell(
-      onDoubleTap: () async {
-        var error = await state.getDocumentStructure(widget.doc.path);
-        if (error != ''){
-          showDialog(context: context, child: ErrorDialog(error));
-        }
-      },
-      onTap: () => setState((){
-        var selected = widget.doc.toggleSelected();
-        if (selected){
-          state.selectExplorer(widget.doc.path);
-        } else {
-          state.deselectExplorer(widget.doc.path);
-        }
-      }),
-      child: Container(
-        color: widget.doc.selected ? Color.fromARGB(25, 0, 0, 150) : Colors.transparent,
-        child: Row(
-          children: [
-            Icon(Icons.description, color: color),
-            Text(widget.doc.label),
-          ],
-        ),
-      ),
+    return StreamBuilder(
+      stream: state.allDeselected,
+        builder: (context, snapshot){
+        print("${widget.doc.path}: ${widget.doc.selected}");
+        return InkWell(
+          onDoubleTap: () async {
+            var error = await state.getDocumentStructure(widget.doc.path);
+            if (error != ''){
+              showDialog(context: context, child: ErrorDialog(error));
+            }
+          },
+          onTap: () => setState((){
+            var selected = widget.doc.toggleSelected();
+            if (selected){
+              state.selectExplorer(widget.doc.path);
+            } else {
+              state.deselectExplorer(widget.doc.path);
+            }
+          }),
+          child: Container(
+            color: widget.doc.selected ? Color.fromARGB(25, 0, 0, 150) : Colors.transparent,
+            child: Row(
+              children: [
+                Icon(Icons.description, color: color),
+                Text(widget.doc.label),
+              ],
+            ),
+          ),
+        );
+      }
     );
   }
 }
