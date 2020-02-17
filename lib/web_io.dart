@@ -51,7 +51,7 @@ class WebIo extends Io {
   }
 
   Future<String> moveFiles(String project, List<String> files, String moveTo) async {
-    return await _request(function: "RenameFile", project: project, parameters: {"Files": files, "MoveTo": moveTo});
+    return await _request(function: "MoveFiles", project: project, parameters: {"Files": files, "MoveTo": moveTo});
   }
 
   Future<String> _request({String function, String project="", Map<String,Object> parameters}) async {
