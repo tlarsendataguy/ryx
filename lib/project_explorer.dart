@@ -25,7 +25,9 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
       InkWell(
         child: Row(
           children: <Widget>[
-            Icon(Icons.folder, color: folderColor),
+            widget.structure.docs.length == 0 ?
+              Icon(Icons.folder_open, color: folderColor) :
+              Icon(Icons.folder, color: folderColor),
             Text(label),
           ],
         ),
@@ -95,7 +97,6 @@ class _FileExplorerState extends State<FileExplorer> {
     return StreamBuilder(
       stream: state.allDeselected,
         builder: (context, snapshot){
-        print("${widget.doc.path}: ${widget.doc.selected}");
         return InkWell(
           onDoubleTap: () async {
             var error = await state.getDocumentStructure(widget.doc.path);

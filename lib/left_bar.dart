@@ -6,7 +6,7 @@ import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/project_explorer.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/communicator_data.dart';
-import 'package:ryx_gui/right_bar.dart';
+import 'package:ryx_gui/choose_folder_dialog.dart';
 
 class LeftBar extends StatelessWidget {
   final verticalScroll = ScrollController();
@@ -79,7 +79,7 @@ class LeftBar extends StatelessWidget {
                                   );
                                 },
                               );
-                              if (folder == null){
+                              if (folder == ""){
                                 return;
                               }
                               showDialog(context: context, child: BusyDialog('Moving files...'), barrierDismissible: false);
