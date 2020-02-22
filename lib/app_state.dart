@@ -135,9 +135,9 @@ class AppState extends BlocState{
     return error;
   }
 
-  Future<Response<int>> makeMacroAbsolute(String macro) async {
+  Future<Response<int>> makeFilesAbsolute(List<String> files) async {
     var project = _currentProject.value;
-    var response = await _communicator.makeMacroAbsolute(project, macro);
+    var response = await _communicator.makeFilesAbsolute(project, files);
     return response;
   }
 
@@ -147,9 +147,9 @@ class AppState extends BlocState{
     return response;
   }
 
-  Future<Response<int>> makeMacroRelative(String macro) async {
+  Future<Response<int>> makeFilesRelative(List<String> files) async {
     var project = _currentProject.value;
-    var response = await _communicator.makeMacroRelative(project, macro);
+    var response = await _communicator.makeFilesRelative(project, files);
     return response;
   }
 
@@ -159,14 +159,24 @@ class AppState extends BlocState{
     return response;
   }
 
-  Future<String> renameFile(String newFile) async {
+  Future<String> renameFiles(List<String> newFiles) async {
     var project = _currentProject.value;
-    var oldFile = _currentDocument.value;
-    var response = await _communicator.renameFile(project, oldFile, newFile);
+    var oldFiles = selectedExplorer.toList();
+    var response = await _communicator.renameFiles(project, oldFiles, newFiles);
     if (response.success){
-      _currentDocument.add(newFile);
+      var currentDoc = _currentDocument.value;
+      var index = 0;
+      for (var file in oldFiles){
+        if (file == currentDoc){
+          _currentDocument.add(newFiles[index]);
+          break;
+        }
+        index++;
+      }
       var structure = _projectStructure.value;
-      structure.renameFile(oldFile, newFile);
+      structure.renameFiles(oldFiles, newFiles);
+      structure.deselectAllDocsRecursive();
+      _removeExplorerSelection();
       _projectStructure.add(structure);
     }
     return response.error;
@@ -178,14 +188,16 @@ class AppState extends BlocState{
     var response = await _communicator.moveFiles(project, files, moveTo);
     if (response.success){
       var structure = _projectStructure.value;
+      var newFiles = List<String>();
       for (var file in files){
         if (response.value.contains(file)){
           continue;
         }
         var name = file.split("\\").last;
         var newFile = moveTo + "\\" + name;
-        structure.renameFile(file, newFile);
+        newFiles.add(newFile);
       }
+      structure.renameFiles(files, newFiles);
       structure.deselectAllDocsRecursive();
       _removeExplorerSelection();
       _projectStructure.add(structure);

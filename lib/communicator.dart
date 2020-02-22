@@ -8,11 +8,11 @@ abstract class Io{
   Future<String> getDocumentStructure(String project, String document);
   Future<String> getToolData();
   Future<String> getWhereUsed(String project, String document);
-  Future<String> makeMacroAbsolute(String project, String macro);
+  Future<String> makeFilesAbsolute(String project, List<String> files);
   Future<String> makeAllAbsolute(String project);
-  Future<String> makeMacroRelative(String project, String macro);
+  Future<String> makeFilesRelative(String project, List<String> files);
   Future<String> makeAllRelative(String project);
-  Future<String> renameFile(String project, String from, String to);
+  Future<String> renameFiles(String project, List<String> from, List<String> to);
   Future<String> moveFiles(String project, List<String> files, String moveTo);
 }
 
@@ -61,9 +61,9 @@ class Communicator{
     );
   }
 
-  Future<Response<int>> makeMacroAbsolute(String project, String macro) async {
+  Future<Response<int>> makeFilesAbsolute(String project, List<String> files) async {
     return await _buildResponse(
-      request: ()async => await _io.makeMacroAbsolute(project, macro),
+      request: ()async => await _io.makeFilesAbsolute(project, files),
       buildData: _buildIntResponse,
     );
   }
@@ -75,9 +75,9 @@ class Communicator{
     );
   }
 
-  Future<Response<int>> makeMacroRelative(String project, String macro) async {
+  Future<Response<int>> makeFilesRelative(String project, List<String> files) async {
     return await _buildResponse(
-      request: () async => await _io.makeMacroRelative(project, macro),
+      request: () async => await _io.makeFilesRelative(project, files),
       buildData: _buildIntResponse,
     );
   }
@@ -89,9 +89,9 @@ class Communicator{
     );
   }
 
-  Future<Response<void>> renameFile(String project, String from, String to) async {
+  Future<Response<void>> renameFiles(String project, List<String> from, List<String> to) async {
     return await _buildResponse(
-      request: () async => await _io.renameFile(project, from, to),
+      request: () async => await _io.renameFiles(project, from, to),
       buildData: (data){return;},
     );
   }

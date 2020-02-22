@@ -21,7 +21,7 @@ class MockSuccessIo extends Io {
     await Future.delayed(Duration(seconds: 1));
     return '{"Success":true,"Data":["C:\\\\Users\\\\tlarsen\\\\Documents\\\\Ryx Unit Testing\\\\01 SETLEAF Equations Completed.yxmd"]}';
   }
-  Future<String> makeMacroAbsolute(String project, String macro) async {
+  Future<String> makeFilesAbsolute(String project, List<String> files) async {
     await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":1}';
   }
@@ -29,7 +29,7 @@ class MockSuccessIo extends Io {
     await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":2}';
   }
-  Future<String> makeMacroRelative(String project, String macro) async {
+  Future<String> makeFilesRelative(String project, List<String> files) async {
     await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":3}';
   }
@@ -37,7 +37,7 @@ class MockSuccessIo extends Io {
     await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":4}';
   }
-  Future<String> renameFile(String project, String from, String to) async {
+  Future<String> renameFiles(String project, List<String> from, List<String> to) async {
     await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":null}';
   }
@@ -55,10 +55,10 @@ class MockInvalidIo extends Io {
   Future<String> getDocumentStructure(String project, String document) async => "blah blah blah";
   Future<String> getToolData() async => "blah blah blah";
   Future<String> getWhereUsed(String project, String document) async => "blah blah blah";
-  Future<String> makeMacroAbsolute(String project, String macro) async => "blah blah blah";
+  Future<String> makeFilesAbsolute(String project, List<String> files) async => "blah blah blah";
   Future<String> makeAllAbsolute(String project) async => "blah blah blah";
-  Future<String> makeMacroRelative(String project, String macro) async => "blah blah blah";
+  Future<String> makeFilesRelative(String project, List<String> files) async => "blah blah blah";
   Future<String> makeAllRelative(String project) async => "blah blah blah";
-  Future<String> renameFile(String project, String from, String to) async => "blah blah blah";
+  Future<String> renameFiles(String project, List<String> from, List<String> to) async => "blah blah blah";
   Future<String> moveFiles(String project, List<String> files, String moveTo) async => "blah blah blah";
 }

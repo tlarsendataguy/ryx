@@ -38,10 +38,14 @@ class ProjectStructure extends Selectable {
     _expanded = !_expanded;
   }
 
-  void renameFile(String oldName, String newName){
-    var found = _removeFile(oldName);
-    if (found){
-      _addFile(newName);
+  void renameFiles(List<String> oldFiles, List<String> newFiles){
+    var index = 0;
+    for (var oldFile in oldFiles){
+      var found = _removeFile(oldFile);
+      if (found){
+        _addFile(newFiles[index]);
+      }
+      index++;
     }
   }
 

@@ -86,13 +86,13 @@ main(){
 
   test("make macro absolute", () async {
     var communicator = Communicator(validIo);
-    var response = await communicator.makeMacroAbsolute('Project', 'macro');
+    var response = await communicator.makeFilesAbsolute('Project', ['macro']);
     expect(response.success, isTrue);
   });
 
   test("make macro absolute with invalid returned json", () async {
     var communicator = Communicator(badIo);
-    var response = await communicator.makeMacroAbsolute('Project', 'macro');
+    var response = await communicator.makeFilesAbsolute('Project', ['macro']);
     expectParsingDataError(response);
   });
 
@@ -110,13 +110,13 @@ main(){
 
   test("make macro relative", () async {
     var communicator = Communicator(validIo);
-    var response = await communicator.makeMacroRelative('Project', 'macro');
+    var response = await communicator.makeFilesRelative('Project', ['macro']);
     expect(response.success, isTrue);
   });
 
   test("make macro relative with invalid returned json", () async {
     var communicator = Communicator(badIo);
-    var response = await communicator.makeMacroRelative('Project', 'macro');
+    var response = await communicator.makeFilesRelative('Project', ['macro']);
     expectParsingDataError(response);
   });
 
@@ -134,7 +134,7 @@ main(){
 
   test("rename file", () async {
     var communicator = Communicator(validIo);
-    var response = await communicator.renameFile('Project', 'macro', 'macro2');
+    var response = await communicator.renameFiles('Project', ['macro'], ['macro2']);
     expect(response.success, isTrue);
   });
 

@@ -137,7 +137,7 @@ main() {
 
   test("Make macro absolute", () async {
     var state = AppState(MockSuccessIo());
-    var changed = await state.makeMacroAbsolute('some macro');
+    var changed = await state.makeFilesAbsolute(['some macro']);
     expect(changed.success, isTrue);
     expect(changed.value, equals(1));
   });
@@ -151,7 +151,7 @@ main() {
 
   test("Make macro relative", () async {
     var state = AppState(MockSuccessIo());
-    var changed = await state.makeMacroRelative('some macro');
+    var changed = await state.makeFilesRelative(['some macro']);
     expect(changed.success, isTrue);
     expect(changed.value, equals(3));
   });
@@ -168,8 +168,9 @@ main() {
     expect(
         state.currentDocument, emitsInOrder(['', '', 'Old File', 'New File']));
     await state.getProjectStructure('project');
-    await state.getDocumentStructure('Old File');
-    var error = await state.renameFile('New File');
+    state.getDocumentStructure('Old File');
+    state.selectExplorer('Old File');
+    var error = await state.renameFiles(['New File']);
     expect(error, equals(''));
   });
 

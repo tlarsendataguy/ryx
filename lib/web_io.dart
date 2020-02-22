@@ -30,24 +30,24 @@ class WebIo extends Io {
     return await _request(function: "WhereUsed", project: project, parameters: {"FilePath": document});
   }
 
-  Future<String> makeMacroAbsolute(String project, String macro) async {
-    return await _request(function: "MakeMacroAbsolute", project: project, parameters: {"Macro": macro});
+  Future<String> makeFilesAbsolute(String project, List<String> files) async {
+    return await _request(function: "MakeFilesAbsolute", project: project, parameters: {"Files": files});
   }
 
   Future<String> makeAllAbsolute(String project) async {
-    return await _request(function: "MakeAllMacrosAbsolute", project: project);
+    return await _request(function: "MakeAllFilesAbsolute", project: project);
   }
 
-  Future<String> makeMacroRelative(String project, String macro) async {
-    return await _request(function: "MakeMacroRelative", project: project, parameters: {"Macro": macro});
+  Future<String> makeFilesRelative(String project, List<String> files) async {
+    return await _request(function: "MakeFilesRelative", project: project, parameters: {"Files": files});
   }
 
   Future<String> makeAllRelative(String project) async {
-    return await _request(function: "MakeAllMacrosRelative", project: project);
+    return await _request(function: "MakeAllFilesRelative", project: project);
   }
 
-  Future<String> renameFile(String project, String from, String to) async {
-    return await _request(function: "RenameFile", project: project, parameters: {"From":from, "To": to});
+  Future<String> renameFiles(String project, List<String> from, List<String> to) async {
+    return await _request(function: "RenameFiles", project: project, parameters: {"From":from, "To": to});
   }
 
   Future<String> moveFiles(String project, List<String> files, String moveTo) async {

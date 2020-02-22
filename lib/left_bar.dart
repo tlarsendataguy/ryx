@@ -30,6 +30,27 @@ class LeftBar extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                Center(child: Text("Project:")),
+                Row(
+                  children: <Widget>[
+                    Expanded(child: ChangePathsButton(
+                      child: Text(
+                        "Make relative",
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      busyMessage: "Making macros relative...",
+                      changePathsAction: state.makeAllRelative,
+                    )),
+                    Expanded(child: ChangePathsButton(
+                      child: Text(
+                        "Make absolute",
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      busyMessage: "Making macros absolute...",
+                      changePathsAction: state.makeAllAbsolute,
+                    )),
+                  ],
+                ),
                 Expanded(
                   child: CupertinoScrollbar(
                     controller: verticalScroll,
@@ -53,69 +74,78 @@ class LeftBar extends StatelessWidget {
                     if (!explorerSnapshot.hasData || !explorerSnapshot.data){
                       return Container();
                     }
-                    return Row(
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Expanded(
-                          child: RaisedButton(
-                            child: Text("Deselect all"),
-                            onPressed: state.deselectAllExplorer,
-                          ),
+                        Center(child: Text("Selection:")),
+                        RaisedButton(
+                          child: Text("Deselect all"),
+                          onPressed: state.deselectAllExplorer,
                         ),
-                        Expanded(
-                          child: RaisedButton(
-                            child: Text("Move files..."),
-                            onPressed: () async {
-                              var folder = await showDialog<String>(
-                                context: context,
-                                builder: (context){
-                                  return StreamBuilder(
-                                    stream: state.projectStructure,
-                                    builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
-                                      if (!snapshot.hasData){
-                                        return Container();
-                                      }
-                                      return ChooseFolderDialog(structure: snapshot.data.copyFolders());
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: RaisedButton(
+                                child: Text("Rename"),
+                                onPressed: null,
+                              ),
+                            ),
+                            Expanded(
+                              child: RaisedButton(
+                                child: Text("Move"),
+                                onPressed: () async {
+                                  var folder = await showDialog<String>(
+                                    context: context,
+                                    builder: (context){
+                                      return StreamBuilder(
+                                        stream: state.projectStructure,
+                                        builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+                                          if (!snapshot.hasData){
+                                            return Container();
+                                          }
+                                          return ChooseFolderDialog(structure: snapshot.data.copyFolders());
+                                        },
+                                      );
                                     },
                                   );
+                                  if (folder == ""){
+                                    return;
+                                  }
+                                  showDialog(context: context, child: BusyDialog('Moving files...'), barrierDismissible: false);
+                                  var response = await state.moveFiles(folder);
+                                  Navigator.of(context).pop();
+                                  if (!response.success){
+                                    await showDialog(context: context, child: OkDialog(response.error));
+                                    return;
+                                  }
+                                  if (response.value.length > 0) {
+                                    await showDialog(context: context, child: OkDialog("${response.value.length} files could not be moved"));
+                                    return;
+                                  }
                                 },
-                              );
-                              if (folder == ""){
-                                return;
-                              }
-                              showDialog(context: context, child: BusyDialog('Moving files...'), barrierDismissible: false);
-                              var response = await state.moveFiles(folder);
-                              Navigator.of(context).pop();
-                              if (!response.success){
-                                await showDialog(context: context, child: OkDialog(response.error));
-                                return;
-                              }
-                              if (response.value.length > 0) {
-                                await showDialog(context: context, child: OkDialog("${response.value.length} files could not be moved"));
-                                return;
-                              }
-                            },
-                          ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: RaisedButton(
+                                child: Text("Make relative"),
+                                onPressed: null,
+                              ),
+                            ),
+                            Expanded(
+                              child: RaisedButton(
+                                child: Text("Make absolute"),
+                                onPressed: null,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     );
                   },
-                ),
-                ChangePathsButton(
-                  child: Text(
-                    "Make all project macros relative",
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  busyMessage: "Making macros relative...",
-                  changePathsAction: state.makeAllRelative,
-                ),
-                ChangePathsButton(
-                  child: Text(
-                    "Make all project macros absolute",
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  busyMessage: "Making macros absolute...",
-                  changePathsAction: state.makeAllAbsolute,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ],
             );
