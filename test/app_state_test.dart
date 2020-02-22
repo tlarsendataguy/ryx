@@ -135,43 +135,46 @@ main() {
     print(error);
   });
 
-  test("Make macro absolute", () async {
+  test("Make selected files absolute", () async {
     var state = AppState(MockSuccessIo());
-    var changed = await state.makeFilesAbsolute(['some macro']);
+    state.selectExplorer('Some macro');
+    var changed = await state.makeSelectionAbsolute();
     expect(changed.success, isTrue);
     expect(changed.value, equals(1));
   });
 
-  test("Make all macros absolute", () async {
+  test("Make all files absolute", () async {
     var state = AppState(MockSuccessIo());
     var changed = await state.makeAllAbsolute();
     expect(changed.success, isTrue);
     expect(changed.value, equals(2));
   });
 
-  test("Make macro relative", () async {
+  test("Make selected files relative", () async {
     var state = AppState(MockSuccessIo());
-    var changed = await state.makeFilesRelative(['some macro']);
+    state.selectExplorer('some macro');
+    var changed = await state.makeSelectionRelative();
     expect(changed.success, isTrue);
     expect(changed.value, equals(3));
   });
 
-  test("Make all macros relative", () async {
+  test("Make all files relative", () async {
     var state = AppState(MockSuccessIo());
     var changed = await state.makeAllRelative();
     expect(changed.success, isTrue);
     expect(changed.value, equals(4));
   });
 
-  test("Rename file", () async {
+  test("Rename files", () async {
     var state = AppState(MockSuccessIo());
     expect(
         state.currentDocument, emitsInOrder(['', '', 'Old File', 'New File']));
     await state.getProjectStructure('project');
     state.getDocumentStructure('Old File');
     state.selectExplorer('Old File');
-    var error = await state.renameFiles(['New File']);
-    expect(error, equals(''));
+    var response = await state.renameFiles(['Old File'],['New File']);
+    expect(response.success, isTrue);
+    expect(response.value.length, equals(40));
   });
 
   test("Select and deselect files/folders", () async {
@@ -214,6 +217,6 @@ main() {
     await state.getProjectStructure('project');
     state.selectExplorerList(['blah1','blah2']);
     var response = await state.moveFiles('some\\other\\folder');
-    expect(response.value.length, equals(1));
+    expect(response.value.length, equals(40));
   });
 }

@@ -30,11 +30,11 @@ class MockSuccessIo extends Io {
   }
   Future<String> renameFiles(String project, List<String> from, List<String> to) async {
     await Future.delayed(Duration(seconds: 2));
-    return '{"Success":true,"Data":null}';
+    return '{"Success":true,"Data":["File1","File2","File3","File4","File5","File6","File7","File8","File9","File10","File11","File12","File13","File14","File15","File16","File17","File18","File19","File20","File21","File22","File23","File24","File25","File26","File27","File28","File29","File30","File31","File32","File33","File34","File35","File36","File37","File38","File39","File40"]}';
   }
   Future<String> moveFiles(String project, List<String> files, String moveTo) async {
     await Future.delayed(Duration(seconds: 1));
-    return '{"Success":true,"Data":["some error message about some file failing to move"]}';
+    return '{"Success":true,"Data":["File1","File2","File3","File4","File5","File6","File7","File8","File9","File10","File11","File12","File13","File14","File15","File16","File17","File18","File19","File20","File21","File22","File23","File24","File25","File26","File27","File28","File29","File30","File31","File32","File33","File34","File35","File36","File37","File38","File39","File40"]}';
   }
 }
 

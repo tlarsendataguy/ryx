@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/formats.dart';
+
 
 class ChooseFolderDialog extends StatefulWidget {
   ChooseFolderDialog({this.structure});
@@ -60,7 +60,7 @@ class _ChooseFolderDialogState extends State<ChooseFolderDialog> {
                     ),
                     RaisedButton(
                       child: Text("Select"),
-                      onPressed: selectedFolder == null ? null : (){
+                      onPressed: selectedFolder == "" ? null : (){
                         Navigator.of(context).pop(selectedFolder);
                       },
                     )

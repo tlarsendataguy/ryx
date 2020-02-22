@@ -84,65 +84,66 @@ main(){
     expectParsingDataError(response);
   });
 
-  test("make macro absolute", () async {
+  test("make files absolute", () async {
     var communicator = Communicator(validIo);
     var response = await communicator.makeFilesAbsolute('Project', ['macro']);
     expect(response.success, isTrue);
   });
 
-  test("make macro absolute with invalid returned json", () async {
+  test("make files absolute with invalid returned json", () async {
     var communicator = Communicator(badIo);
     var response = await communicator.makeFilesAbsolute('Project', ['macro']);
     expectParsingDataError(response);
   });
 
-  test("Make all macros absolute", () async {
+  test("Make all files absolute", () async {
     var communicator = Communicator(validIo);
     var response = await communicator.makeAllAbsolute('Project');
     expect(response.success, isTrue);
   });
 
-  test("make all macros absolute with invalid returned json", () async {
+  test("make all files absolute with invalid returned json", () async {
     var communicator = Communicator(badIo);
     var response = await communicator.makeAllAbsolute('Project');
     expectParsingDataError(response);
   });
 
-  test("make macro relative", () async {
+  test("make files relative", () async {
     var communicator = Communicator(validIo);
     var response = await communicator.makeFilesRelative('Project', ['macro']);
     expect(response.success, isTrue);
   });
 
-  test("make macro relative with invalid returned json", () async {
+  test("make files relative with invalid returned json", () async {
     var communicator = Communicator(badIo);
     var response = await communicator.makeFilesRelative('Project', ['macro']);
     expectParsingDataError(response);
   });
 
-  test("Make all macros relative", () async {
+  test("Make all files relative", () async {
     var communicator = Communicator(validIo);
     var response = await communicator.makeAllRelative('Project');
     expect(response.success, isTrue);
   });
 
-  test("make all macros relative with invalid returned json", () async {
+  test("make all files relative with invalid returned json", () async {
     var communicator = Communicator(badIo);
     var response = await communicator.makeAllRelative('Project');
     expectParsingDataError(response);
   });
 
-  test("rename file", () async {
+  test("rename files", () async {
     var communicator = Communicator(validIo);
     var response = await communicator.renameFiles('Project', ['macro'], ['macro2']);
     expect(response.success, isTrue);
+    expect(response.value.length, equals(40));
   });
 
   test("move files", () async {
     var communicator = Communicator(validIo);
     var response = await communicator.moveFiles('Project', ['file1','file2'],'move\\to\\folder');
     expect(response.success, isTrue);
-    expect(response.value.length, equals(1));
+    expect(response.value.length, equals(40));
   });
 }
 

@@ -57,7 +57,7 @@ class Communicator{
   Future<Response<List<String>>> getWhereUsed(String project, String document) async {
     return await _buildResponse(
       request: ()async => await _io.getWhereUsed(project, document),
-      buildData: _buildWhereUsed,
+      buildData: _buildStringListResponse,
     );
   }
 
@@ -89,17 +89,17 @@ class Communicator{
     );
   }
 
-  Future<Response<void>> renameFiles(String project, List<String> from, List<String> to) async {
+  Future<Response<List<String>>> renameFiles(String project, List<String> from, List<String> to) async {
     return await _buildResponse(
       request: () async => await _io.renameFiles(project, from, to),
-      buildData: (data){return;},
+      buildData: _buildStringListResponse,
     );
   }
 
   Future<Response<List<String>>> moveFiles(String project, List<String> files, String moveTo) async {
     return await _buildResponse(
       request: () async => await _io.moveFiles(project, files, moveTo),
-      buildData: _buildMoveFilesResponse,
+      buildData: _buildStringListResponse,
     );
   }
 
@@ -209,7 +209,7 @@ class Communicator{
     return tools;
   }
 
-  Future<List<String>> _buildWhereUsed(dynamic data) async {
+  Future<List<String>> _buildStringListResponse(dynamic data) async {
     data = data as List<dynamic>;
     var whereUsed = List<String>();
     for (var where in data){
@@ -220,15 +220,6 @@ class Communicator{
   }
 
   Future<int> _buildIntResponse(dynamic data) async => data as int;
-
-  Future<List<String>> _buildMoveFilesResponse(dynamic data) async {
-    data = data as List<dynamic>;
-    var errors = List<String>();
-    for (var path in data) {
-      errors.add(path as String);
-    }
-    return errors;
-  }
 
   Response<T> _parseError<T>(String error){
     return Response<T>(null, false, 'Error parsing data returned from webserver: ' + error);

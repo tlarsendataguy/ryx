@@ -46,8 +46,8 @@ class BusyDialog extends StatelessWidget {
 }
 
 class OkDialog extends StatelessWidget {
-  OkDialog(this.message);
-  final String message;
+  OkDialog(this.child);
+  final Widget child;
 
   Widget build(BuildContext context) {
     return Dialog(
@@ -58,7 +58,7 @@ class OkDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(message),
+              child,
               RaisedButton(
                 child: Text("Ok"),
                 onPressed: Navigator.of(context).pop,

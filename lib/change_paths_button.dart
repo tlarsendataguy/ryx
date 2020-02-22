@@ -25,12 +25,12 @@ class ChangePathsButton extends StatelessWidget{
         if (changed.success){
           await showDialog(
             context: context,
-            child: OkDialog("${changed.value} workflows updated"),
+            child: OkDialog(Text("${changed.value} workflows updated")),
           );
         } else {
           await showDialog(
             context: context,
-            child: OkDialog("Error: ${changed.error}"),
+            child: OkDialog(Text("Error: ${changed.error}")),
           );
         }
       },

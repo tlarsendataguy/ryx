@@ -135,9 +135,9 @@ class AppState extends BlocState{
     return error;
   }
 
-  Future<Response<int>> makeFilesAbsolute(List<String> files) async {
+  Future<Response<int>> makeSelectionAbsolute() async {
     var project = _currentProject.value;
-    var response = await _communicator.makeFilesAbsolute(project, files);
+    var response = await _communicator.makeFilesAbsolute(project, selectedExplorer.toList());
     return response;
   }
 
@@ -147,9 +147,9 @@ class AppState extends BlocState{
     return response;
   }
 
-  Future<Response<int>> makeFilesRelative(List<String> files) async {
+  Future<Response<int>> makeSelectionRelative() async {
     var project = _currentProject.value;
-    var response = await _communicator.makeFilesRelative(project, files);
+    var response = await _communicator.makeFilesRelative(project, selectedExplorer.toList());
     return response;
   }
 
@@ -159,9 +159,8 @@ class AppState extends BlocState{
     return response;
   }
 
-  Future<String> renameFiles(List<String> newFiles) async {
+  Future<Response<List<String>>> renameFiles(List<String> oldFiles, List<String> newFiles) async {
     var project = _currentProject.value;
-    var oldFiles = selectedExplorer.toList();
     var response = await _communicator.renameFiles(project, oldFiles, newFiles);
     if (response.success){
       var currentDoc = _currentDocument.value;
@@ -179,7 +178,7 @@ class AppState extends BlocState{
       _removeExplorerSelection();
       _projectStructure.add(structure);
     }
-    return response.error;
+    return response;
   }
 
   Future<Response<List<String>>> moveFiles(String moveTo) async {
