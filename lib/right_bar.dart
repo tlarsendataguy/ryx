@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
+import 'package:ryx_gui/loading_indicator.dart';
 
 class RightBar extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class WhereUsedViewer extends StatelessWidget {
             stream: state.isLoadingWhereUsed,
             builder: (context, AsyncSnapshot<bool> snapshot) {
               if (!snapshot.hasData || snapshot.data) {
-                return Center(child: CircularProgressIndicator());
+                return LoadingIndicator();
               }
               return StreamBuilder(
                 stream: state.whereUsed,

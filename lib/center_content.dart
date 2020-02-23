@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
+import 'package:ryx_gui/loading_indicator.dart';
 import 'package:ryx_gui/workflow_viewer.dart';
 
 class CenterContent extends StatelessWidget {
@@ -10,7 +11,7 @@ class CenterContent extends StatelessWidget {
       stream: state.isLoadingDocument,
       builder: (context, AsyncSnapshot<bool> snapshot){
         if ((snapshot.hasData && snapshot.data) || !snapshot.hasData){
-          return Center(child: CircularProgressIndicator());
+          return LoadingIndicator();
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

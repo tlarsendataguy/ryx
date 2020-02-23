@@ -4,6 +4,7 @@ import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/change_paths_button.dart';
 import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/formats.dart';
+import 'package:ryx_gui/loading_indicator.dart';
 import 'package:ryx_gui/project_explorer.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/communicator_data.dart';
@@ -20,7 +21,7 @@ class LeftBar extends StatelessWidget {
       stream: state.isLoadingProject,
       builder: (context, AsyncSnapshot<bool> snapshot){
         if ((snapshot.hasData && snapshot.data) || !snapshot.hasData){
-          return Center(child: CircularProgressIndicator());
+          return LoadingIndicator();
         }
         return StreamBuilder(
           stream: state.projectStructure,
@@ -104,13 +105,13 @@ class LeftBar extends StatelessWidget {
                             Expanded(
                               child: RaisedButton(
                                 child: Text("Make relative"),
-                                onPressed: null,
+                                onPressed: _buildOnSelectionRelative(context),
                               ),
                             ),
                             Expanded(
                               child: RaisedButton(
                                 child: Text("Make absolute"),
-                                onPressed: null,
+                                onPressed: _buildOnSelectionAbsolute(context),
                               ),
                             ),
                           ],
@@ -126,6 +127,36 @@ class LeftBar extends StatelessWidget {
       },
     );
   }
+}
+
+Function _buildOnSelectionRelative(BuildContext context){
+  return () async {
+    var state = BlocProvider.of<AppState>(context);
+    showDialog(context: context, child: BusyDialog("Making macro paths relative..."));
+    var response = await state.makeSelectionRelative();
+    Navigator.of(context).pop();
+    if (!response.success){
+      await showDialog(
+        context: context,
+        child: OkDialog(Text("Error: ${response.error}")),
+      );
+    }
+  };
+}
+
+Function _buildOnSelectionAbsolute(BuildContext context){
+  return () async {
+    var state = BlocProvider.of<AppState>(context);
+    showDialog(context: context, child: BusyDialog("Making macro paths absolute..."));
+    var response = await state.makeSelectionAbsolute();
+    Navigator.of(context).pop();
+    if (!response.success){
+      await showDialog(
+        context: context,
+        child: OkDialog(Text("Error: ${response.error}")),
+      );
+    }
+  };
 }
 
 Function _buildOnRename(BuildContext context) {

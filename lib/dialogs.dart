@@ -32,7 +32,7 @@ class BusyDialog extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              CircularProgressIndicator(),
+              //CircularProgressIndicator(),
               Padding(
                 padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
                 child: Text(message),
