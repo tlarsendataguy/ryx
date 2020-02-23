@@ -25,7 +25,7 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
       InkWell(
         child: Row(
           children: <Widget>[
-            widget.structure.docs.length == 0 ?
+            widget.structure.isEmpty() ?
               Icon(Icons.folder_open, color: folderColor) :
               Icon(Icons.folder, color: folderColor),
             InkWell(child: Icon(Icons.edit, size: 16), onTap: (){}),

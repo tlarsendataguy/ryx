@@ -88,6 +88,16 @@ class ProjectStructure extends Selectable {
     return copy;
   }
 
+  bool isEmpty(){
+    if (docs.length > 0) {
+      return false;
+    }
+    for (var folder in folders){
+      if (!folder.isEmpty()) return false;
+    }
+    return true;
+  }
+
   bool _removeFile(String removePath){
     for (var i = 0; i < docs.length; i++){
       if (docs[i].path != removePath){

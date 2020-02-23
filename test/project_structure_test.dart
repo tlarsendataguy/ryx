@@ -33,6 +33,22 @@ main(){
     expect(structure.folders[0].docs.length, equals(2));
     expect(structure.folders[1].docs.length, equals(2));
   });
+
+  test("Stucture are not empty if they have docs",(){
+    var structure = ProjectStructure(
+      path: "C:\\Library",
+      folders: [],
+      docs: [
+        ProjectStructureDoc(path: "C:\\Library\\SomeFile"),
+      ],
+    );
+    expect(structure.isEmpty(), isFalse);
+  });
+
+  test("Structures are not empty if their folders contain docs",(){
+    var structure = generateSampleStructure();
+    expect(structure.isEmpty(), isFalse);
+  });
 }
 
 ProjectStructure generateSampleStructure(){
