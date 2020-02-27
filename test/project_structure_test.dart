@@ -49,6 +49,17 @@ main(){
     var structure = generateSampleStructure();
     expect(structure.isEmpty(), isFalse);
   });
+
+  test("Rename folder in structure", () async {
+    var structure = generateSampleStructure();
+    structure.folders[0].folders.add(ProjectStructure(path: "C:\\Library\\Folder1\\Subfolder", folders: [], docs: []));
+    var newStructure = structure.renameFolder("C:\\Library\\Folder1", "NewFolder");
+    expect(newStructure.folders[1].path, equals("C:\\Library\\Folder2"));
+    expect(newStructure.folders[0].path, equals("C:\\Library\\NewFolder"));
+    expect(newStructure.folders[0].folders[0].path, equals("C:\\Library\\NewFolder\\Subfolder"));
+    expect(newStructure.folders[0].docs[0].path, equals("C:\\Library\\NewFolder\\Doc1_1"));
+    expect(newStructure.folders[0].docs[1].path, equals("C:\\Library\\NewFolder\\Doc1_2"));
+  });
 }
 
 ProjectStructure generateSampleStructure(){

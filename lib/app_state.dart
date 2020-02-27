@@ -204,6 +204,24 @@ class AppState extends BlocState{
     return response;
   }
 
+  Future<Response<void>> renameFolder(String from, String to) async {
+    var project = _currentProject.value;
+    var response = await _communicator.renameFolder(project, from, to);
+    if (!response.success){
+      return response;
+    }
+    var newStructure = _projectStructure.value.renameFolder(from, to);
+    if (project == from){
+      _currentProject.add(newStructure.path);
+    }
+    _projectStructure.add(newStructure);
+    var currentDoc = _currentDocument.value;
+    if (currentDoc.startsWith(from)){
+      _unloadDocument();
+    }
+    return response;
+  }
+
   void clearFolder() async {
     _currentFolder.add("");
     _folders.add(null);

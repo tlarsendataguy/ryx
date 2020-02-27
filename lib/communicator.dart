@@ -14,6 +14,7 @@ abstract class Io{
   Future<String> makeAllRelative(String project);
   Future<String> renameFiles(String project, List<String> from, List<String> to);
   Future<String> moveFiles(String project, List<String> files, String moveTo);
+  Future<String> renameFolder(String project, String from, String to);
 }
 
 typedef Future<T> BuildData<T>(dynamic data);
@@ -100,6 +101,13 @@ class Communicator{
     return await _buildResponse(
       request: () async => await _io.moveFiles(project, files, moveTo),
       buildData: _buildStringListResponse,
+    );
+  }
+
+  Future<Response<void>> renameFolder(String project, String from, String to) async {
+    return await _buildResponse(
+      request: () async => await _io.renameFolder(project, from, to),
+      buildData: (data) async {},
     );
   }
 

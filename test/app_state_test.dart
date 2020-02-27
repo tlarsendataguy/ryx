@@ -219,4 +219,25 @@ main() {
     var response = await state.moveFiles('some\\other\\folder');
     expect(response.value.length, equals(40));
   });
+
+  test("Rename folder",() async{
+    var state = AppState(MockSuccessIo());
+    expect(
+        state.currentDocument, emitsInOrder(['', '', 'some\\other\\folder\\Something.yxmc', '']));
+    expect(
+      state.projectStructure, emitsInOrder([isNull,isNotNull,isNotNull]));
+
+    await state.getProjectStructure('project');
+    await state.getDocumentStructure('some\\other\\folder\\Something.yxmc');
+    var response = await state.renameFolder('some\\other\\folder', 'stuff');
+    expect(response.success, isTrue);
+  });
+
+  test("Rename root folder", () async {
+    var state = AppState(MockSuccessIo());
+    expect(state.currentProject, emitsInOrder(['','C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing', 'C:\\Users\\tlarsen\\Documents\\new root name']));
+
+    await state.getProjectStructure('C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing');
+    await state.renameFolder('C:\\Users\\tlarsen\\Documents\\Ryx Unit Testing', 'new root name');
+  });
 }

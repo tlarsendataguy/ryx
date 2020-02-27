@@ -145,6 +145,18 @@ main(){
     expect(response.success, isTrue);
     expect(response.value.length, equals(40));
   });
+
+  test("rename folder", () async {
+    var communicator = Communicator(validIo);
+    var response = await communicator.renameFolder('Project', 'Path\\To\\Old\\Folder', 'NewFolder');
+    expect(response.success, isTrue);
+  });
+
+  test("rename folder with invalid returned json", () async {
+    var communicator = Communicator(badIo);
+    var response = await communicator.renameFolder('Project', 'Path\\To\\Old\\Folder', 'NewFolder');
+    expectParsingDataError(response);
+  });
 }
 
 

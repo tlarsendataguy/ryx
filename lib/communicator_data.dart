@@ -98,6 +98,46 @@ class ProjectStructure extends Selectable {
     return true;
   }
 
+  ProjectStructure renameFolder(String path, String newName){
+    if (this.path != path){
+      var newFolders = folders.map((folder)=>folder.renameFolder(path, newName));
+      return ProjectStructure(
+        path: this.path,
+        folders: newFolders.toList(),
+        docs: this.docs,
+        expanded: this.expanded,
+        selected: this.selected,
+      );
+    }
+
+    var splitPath = path.split("\\")..removeLast();
+    splitPath.add(newName);
+    var newPath = splitPath.join("\\");
+    return _repath(newPath);
+  }
+
+  ProjectStructure _repath(String newPath){
+    var newDocs = docs.map((doc){
+      var name = doc.path.split("\\").last;
+      var newDocPath = "$newPath\\$name";
+      return ProjectStructureDoc(path: newDocPath);
+    });
+
+    var newFolders = folders.map((folder){
+      var name = folder.path.split("\\").last;
+      var newFolderPath = "$newPath\\$name";
+      return folder._repath(newFolderPath);
+    });
+
+    return ProjectStructure(
+      path: newPath,
+      docs: newDocs.toList(),
+      folders: newFolders.toList(),
+      expanded: this.expanded,
+      selected: this.selected,
+    );
+  }
+
   bool _removeFile(String removePath){
     for (var i = 0; i < docs.length; i++){
       if (docs[i].path != removePath){

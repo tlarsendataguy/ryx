@@ -28,7 +28,10 @@ class _ProjectExplorerState extends State<ProjectExplorer> {
             widget.structure.isEmpty() ?
               Icon(Icons.folder_open, color: folderColor) :
               Icon(Icons.folder, color: folderColor),
-            InkWell(child: Icon(Icons.edit, size: 16), onTap: (){}),
+            InkWell(
+              child: Icon(Icons.edit, size: 16),
+              onTap: _buildOnRename(context, widget.structure.path),
+            ),
             Text(label),
           ],
         ),
@@ -124,6 +127,75 @@ class _FileExplorerState extends State<FileExplorer> {
           ),
         );
       }
+    );
+  }
+}
+
+Function _buildOnRename(BuildContext context, String path) {
+  return () async {
+    var state = BlocProvider.of<AppState>(context);
+    var newName = await showDialog(
+      context: context,
+      child: _RenameDialog(path),
+    );
+    if (newName == "") return;
+
+    showDialog(context: context, child: BusyDialog("Renaming folder..."));
+    var result = await state.renameFolder(path, newName);
+    Navigator.of(context).pop();
+    if (!result.success) {
+      await showDialog(context: context, child: ErrorDialog(result.error));
+    }
+  };
+}
+
+class _RenameDialog extends StatelessWidget {
+  _RenameDialog(String path){
+    var name = path.split("\\").removeLast();
+    _controller = TextEditingController(text: name);
+  }
+
+  TextEditingController _controller;
+
+  Widget build(BuildContext context) {
+
+    return Dialog(
+      child: Container(
+        width: 600,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+          Card(
+              color: cardColor,
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: TextField(controller: _controller),
+              ),
+            ),
+            Card(
+              color: cardColor,
+              child: Padding(
+                padding: EdgeInsets.all(2.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: ()=>Navigator.of(context).pop(""),
+                    ),
+                    RaisedButton(
+                      child: Text("Rename"),
+                      onPressed: (){
+                        Navigator.of(context).pop(_controller.text);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
