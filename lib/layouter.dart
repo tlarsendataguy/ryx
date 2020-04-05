@@ -4,64 +4,46 @@ typedef double GetWidth();
 
 
 class Layouter {
-  Layouter({this.getWidth, this.minContentWidth, this.minSidebarWidth, double leftWidth, double rightWidth})
-  : assert(getWidth != null && minContentWidth != null && minSidebarWidth != null && leftWidth != null && rightWidth != null){
-    _leftWidth = leftWidth;
-    _rightWidth = rightWidth;
+  Layouter({this.getWidth, this.minContentWidth, this.minSidebarWidth, double sidebarWidth})
+  : assert(getWidth != null && minContentWidth != null && minSidebarWidth != null && sidebarWidth != null){
+    _sidebarWidth = sidebarWidth;
   }
 
   final GetWidth getWidth;
   final double minContentWidth;
   final double minSidebarWidth;
 
-  double _leftWidth;
-  double _rightWidth;
-  bool _leftHidden = false;
-  bool _rightHidden = false;
+  double _sidebarWidth;
+  bool _sidebarHidden = false;
 
-  void _setLeftWidth(double width) => _leftWidth = width;
-  void _setLeftHidden(bool hidden) => _leftHidden = hidden;
-  void _setRightWidth(double width) => _rightWidth = width;
-  void _setRightHidden(bool hidden) => _rightHidden = hidden;
+  void _setSidebarWidth(double width) => _sidebarWidth = width;
+  void _setSidebarHidden(bool hidden) => _sidebarHidden = hidden;
 
-  bool tryLeftWidth(double leftWidth) {
-    return _tryWidth(leftWidth, _rightWidth, _rightHidden, _setLeftWidth);
+  bool trySidebarWidth(double sidebarWidth) {
+    return _tryWidth(sidebarWidth, _setSidebarWidth);
   }
 
-  bool tryRightWidth(double rightWidth) {
-    return _tryWidth(rightWidth, _leftWidth, _leftHidden, _setRightWidth);
-  }
-
-  bool _tryWidth(double newWidth, double otherWidth, bool otherHidden, void setWidth(double width)){
+  bool _tryWidth(double newWidth, void setWidth(double width)){
     var width = getWidth();
-    otherWidth = otherHidden ? minSidebarWidth : otherWidth;
-    if (newWidth + otherWidth + minContentWidth > width) {
+    if (newWidth + minContentWidth > width) {
       return false;
     }
     setWidth(newWidth);
     return true;
   }
 
-  void hideLeft(){
-    _setLeftHidden(true);
+  void hideSidebar(){
+    _setSidebarHidden(true);
   }
 
-  void hideRight(){
-    _setRightHidden(true);
+  double unhideSidebar(){
+    return _unhide(_sidebarWidth, _setSidebarWidth, _setSidebarHidden);
   }
 
-  double unhideLeft(){
-    return _unhide(_leftWidth, _rightWidth, _setLeftWidth, _setLeftHidden);
-  }
-
-  double unhideRight(){
-    return _unhide(_rightWidth, _leftWidth, _setRightWidth, _setRightHidden);
-  }
-
-  double _unhide(double thisWidth, double otherWidth, void setWidth(double width), void setHidden(bool hidden)){
+  double _unhide(double thisWidth, void setWidth(double width), void setHidden(bool hidden)){
     var width = getWidth();
-    if (thisWidth + minContentWidth + otherWidth > width){
-      thisWidth = max(minSidebarWidth, width - minContentWidth - otherWidth);
+    if (thisWidth + minContentWidth > width){
+      thisWidth = max(minSidebarWidth, width - minContentWidth);
       setWidth(thisWidth);
     }
     setHidden(false);
@@ -73,8 +55,7 @@ class Layouter {
       getWidth: newGetWidth,
       minContentWidth: minContentWidth,
       minSidebarWidth: minSidebarWidth,
-      leftWidth: _leftWidth,
-      rightWidth: _rightWidth,
+      sidebarWidth: _sidebarWidth,
     );
   }
 }

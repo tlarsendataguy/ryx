@@ -13,29 +13,32 @@ class CenterContent extends StatelessWidget {
         if ((snapshot.hasData && snapshot.data) || !snapshot.hasData){
           return LoadingIndicator();
         }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            StreamBuilder(
-              stream: state.currentDocument,
-              builder: (context, AsyncSnapshot<String> snapshot){
-                if (snapshot.hasData && snapshot.data != "") {
-                  var text = snapshot.data.split("\\").last;
-                  return Row(
-                    children: <Widget>[
-                      Text(text),
-                      IconButton(
-                        icon: Icon(Icons.refresh),
-                        onPressed: () async => await state.getDocumentStructure(snapshot.data),
-                      ),
-                    ],
-                  );
-                }
-                return Text("");
-              },
-            ),
-            Expanded(child: WorkflowViewer()),
-          ],
+        return Padding(
+          padding: EdgeInsets.all(4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              StreamBuilder(
+                stream: state.currentDocument,
+                builder: (context, AsyncSnapshot<String> snapshot){
+                  if (snapshot.hasData && snapshot.data != "") {
+                    var text = snapshot.data.split("\\").last;
+                    return Row(
+                      children: <Widget>[
+                        Text(text),
+                        IconButton(
+                          icon: Icon(Icons.refresh),
+                          onPressed: () async => await state.getDocumentStructure(snapshot.data),
+                        ),
+                      ],
+                    );
+                  }
+                  return Text("");
+                },
+              ),
+              Expanded(child: WorkflowViewer()),
+            ],
+          ),
         );
       },
     );

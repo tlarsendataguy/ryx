@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/layouter.dart';
-import 'package:ryx_gui/right_bar.dart';
 import 'package:ryx_gui/top_bar.dart';
 import 'package:ryx_gui/web_io.dart';
 import 'package:ryx_gui/left_bar.dart';
@@ -44,7 +43,6 @@ class MyApp extends StatelessWidget {
         child: PageStructure(
           topBar: TopBar(),
           leftBar: LeftBar(),
-          rightBar: RightBar(),
           content: CenterContent(),
         ),
       ),
@@ -54,12 +52,11 @@ class MyApp extends StatelessWidget {
 
 class PageStructure extends StatefulWidget {
   PageStructure(
-      {Key key, this.topBar, this.leftBar, this.rightBar, this.content})
+      {Key key, this.topBar, this.leftBar, this.content})
       : super(key: key);
 
   final Widget topBar;
   final Widget leftBar;
-  final Widget rightBar;
   final Widget content;
 
   State<StatefulWidget> createState() => _PageStructureState();
@@ -74,8 +71,7 @@ class _PageStructureState extends State<PageStructure> {
     getWidth: () => 0,
     minContentWidth: 100,
     minSidebarWidth: minSidebarWidth,
-    leftWidth: 300,
-    rightWidth: 300,
+    sidebarWidth: 300,
   );
 
   Widget build(BuildContext context) {
@@ -94,23 +90,15 @@ class _PageStructureState extends State<PageStructure> {
               SideBar(
                 child: widget.leftBar,
                 position: SideBarPosition.Left,
-                tryWidth: layouter.tryLeftWidth,
-                tryUnhide: layouter.unhideLeft,
+                tryWidth: layouter.trySidebarWidth,
+                tryUnhide: layouter.unhideSidebar,
                 minWidth: minSidebarWidth,
-                onHide: layouter.hideLeft,
+                onHide: layouter.hideSidebar,
               ),
               Expanded(
                 child: Card(
                   child: widget.content,
                 ),
-              ),
-              SideBar(
-                child: widget.rightBar,
-               position: SideBarPosition.Right,
-                tryWidth: layouter.tryRightWidth,
-                tryUnhide: layouter.unhideRight,
-                minWidth: minSidebarWidth,
-                onHide: layouter.hideRight,
               ),
             ],
           ),

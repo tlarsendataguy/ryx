@@ -117,7 +117,7 @@ class _FileExplorerState extends State<FileExplorer> {
             }
           }),
           child: Container(
-            color: widget.doc.selected ? Color.fromARGB(25, 0, 0, 150) : Colors.transparent,
+            color: widget.doc.selected ? Theme.of(context).highlightColor : Colors.transparent,
             child: Row(
               children: [
                 Icon(Icons.description, color: color),

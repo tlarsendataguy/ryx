@@ -28,98 +28,105 @@ class LeftBar extends StatelessWidget {
             if (!snapshot.hasData){
               return Container();
             }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Center(child: Text("Project:")),
-                Row(
-                  children: <Widget>[
-                    Expanded(child: ChangePathsButton(
-                      child: Text(
-                        "Make relative",
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      busyMessage: "Making macros relative...",
-                      changePathsAction: state.makeAllRelative,
-                    )),
-                    Expanded(child: ChangePathsButton(
-                      child: Text(
-                        "Make absolute",
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      busyMessage: "Making macros absolute...",
-                      changePathsAction: state.makeAllAbsolute,
-                    )),
-                  ],
-                ),
-                Expanded(
-                  child: CupertinoScrollbar(
-                    controller: verticalScroll,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
+            return Padding(
+              padding: EdgeInsets.only(top: 4, bottom: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Center(child: Text("Project:")),
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: ChangePathsButton(
+                        child: Text(
+                          "Make relative",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        busyMessage: "Making macros relative...",
+                        changePathsAction: state.makeAllRelative,
+                      )),
+                      Expanded(child: ChangePathsButton(
+                        child: Text(
+                          "Make absolute",
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        busyMessage: "Making macros absolute...",
+                        changePathsAction: state.makeAllAbsolute,
+                      )),
+                    ],
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      color: Theme.of(context).canvasColor,
                       child: CupertinoScrollbar(
-                        controller: horizontalScroll,
+                        controller: verticalScroll,
                         child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: ProjectExplorer(
-                            structure: snapshot.data,
+                          scrollDirection: Axis.vertical,
+                          child: CupertinoScrollbar(
+                            controller: horizontalScroll,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: ProjectExplorer(
+                                structure: snapshot.data,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                StreamBuilder(
-                  stream: state.hasSelectedExplorer,
-                  builder: (context, AsyncSnapshot<bool> explorerSnapshot){
-                    if (!explorerSnapshot.hasData || !explorerSnapshot.data){
-                      return Container();
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Center(child: Text("Selection:")),
-                        RaisedButton(
-                          child: Text("Deselect all"),
-                          onPressed: state.deselectAllExplorer,
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: RaisedButton(
-                                child: Text("Rename"),
-                                onPressed: _buildOnRename(context),
+                  StreamBuilder(
+                    stream: state.hasSelectedExplorer,
+                    builder: (context, AsyncSnapshot<bool> explorerSnapshot){
+                      if (!explorerSnapshot.hasData || !explorerSnapshot.data){
+                        return Container();
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Center(child: Text("Selection:")),
+                          RaisedButton(
+                            child: Text("Deselect all"),
+                            onPressed: state.deselectAllExplorer,
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: RaisedButton(
+                                  child: Text("Rename"),
+                                  onPressed: _buildOnRename(context),
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: RaisedButton(
-                                child: Text("Move"),
-                                onPressed: _buildOnMove(context),
+                              Expanded(
+                                child: RaisedButton(
+                                  child: Text("Move"),
+                                  onPressed: _buildOnMove(context),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: RaisedButton(
-                                child: Text("Make relative"),
-                                onPressed: _buildOnSelectionRelative(context),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: RaisedButton(
+                                  child: Text("Make relative"),
+                                  onPressed: _buildOnSelectionRelative(context),
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: RaisedButton(
-                                child: Text("Make absolute"),
-                                onPressed: _buildOnSelectionAbsolute(context),
+                              Expanded(
+                                child: RaisedButton(
+                                  child: Text("Make absolute"),
+                                  onPressed: _buildOnSelectionAbsolute(context),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
             );
           },
         );
