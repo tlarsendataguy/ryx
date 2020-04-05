@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/change_paths_button.dart';
 import 'package:ryx_gui/dialogs.dart';
-import 'package:ryx_gui/formats.dart';
 import 'package:ryx_gui/loading_indicator.dart';
 import 'package:ryx_gui/project_explorer.dart';
 import 'package:ryx_gui/app_state.dart';
@@ -222,7 +221,6 @@ class _RenameFilesDialogState extends State<_RenameFilesDialog> {
           children: <Widget>[
             Expanded(
               child: Card(
-                color: cardColor,
                 child: Padding(
                   padding: EdgeInsets.all(8),
                   child: ListView.builder(
@@ -251,7 +249,6 @@ class _RenameFilesDialogState extends State<_RenameFilesDialog> {
               ),
             ),
             Card(
-              color: cardColor,
               child: Padding(
                 padding: EdgeInsets.all(2.0),
                 child: Row(

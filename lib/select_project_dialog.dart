@@ -3,7 +3,6 @@ import 'package:ryx_gui/split_path.dart';
 import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/dialogs.dart';
-import 'package:ryx_gui/formats.dart';
 
 class SelectProjectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -36,7 +35,6 @@ class SelectProjectDialogStructure extends StatelessWidget {
             child: currentPathStrip, 
             padding: EdgeInsets.all(2.0),
           ),
-          color: cardColor,
         ),
         Expanded(
           child: Card(
@@ -44,7 +42,6 @@ class SelectProjectDialogStructure extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
               child: folderSelector,
             ),
-            color: cardColor,
           ),
         ),
         Card(
@@ -52,7 +49,6 @@ class SelectProjectDialogStructure extends StatelessWidget {
             padding: EdgeInsets.all(2.0),
             child: buttons,
           ),
-          color: cardColor,
         ),
       ],
     );

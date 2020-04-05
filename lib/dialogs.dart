@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ryx_gui/formats.dart';
 
 class ErrorDialog extends StatelessWidget {
   ErrorDialog(this.message);
@@ -26,7 +25,6 @@ class BusyDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       child: Card(
-        color: cardColor,
         child: Padding(
           padding: EdgeInsets.all(8),
           child: Row(
@@ -52,7 +50,6 @@ class OkDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       child: Card(
-        color: cardColor,
         child: Padding(
           padding: EdgeInsets.all(8),
           child: Column(

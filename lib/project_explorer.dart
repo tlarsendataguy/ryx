@@ -166,14 +166,12 @@ class _RenameDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
           Card(
-              color: cardColor,
               child: Padding(
                 padding: EdgeInsets.all(8),
                 child: TextField(controller: _controller),
               ),
             ),
             Card(
-              color: cardColor,
               child: Padding(
                 padding: EdgeInsets.all(2.0),
                 child: Row(

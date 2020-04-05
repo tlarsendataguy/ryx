@@ -23,7 +23,6 @@ class _ChooseFolderDialogState extends State<ChooseFolderDialog> {
         child:  Column(
           children: <Widget>[
             Card(
-              color: cardColor,
               child: Container(
                 padding: EdgeInsets.all(6.0),
                 height: 30,
@@ -35,7 +34,6 @@ class _ChooseFolderDialogState extends State<ChooseFolderDialog> {
             ),
             Expanded(
               child: Card(
-                color: cardColor,
                 child: ListView(
                   padding: EdgeInsets.all(8.0),
                   children: [
@@ -48,7 +46,6 @@ class _ChooseFolderDialogState extends State<ChooseFolderDialog> {
               ),
             ),
             Card(
-              color: cardColor,
               child: Padding(
                 padding: EdgeInsets.all(2.0),
                 child: Row(

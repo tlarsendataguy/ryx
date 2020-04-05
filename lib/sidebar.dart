@@ -12,11 +12,10 @@ typedef double TryUnhide();
 typedef void Hide();
 
 class SideBar extends StatefulWidget {
-  SideBar({Key key, this.color, this.child, this.position, this.tryWidth, this.tryUnhide, this.minWidth, this.onHide}) : super(key: key){
-    assert(color != null && child != null && position != null && tryWidth != null && tryUnhide != null && minWidth != null);
+  SideBar({Key key, this.child, this.position, this.tryWidth, this.tryUnhide, this.minWidth, this.onHide}) : super(key: key){
+    assert(child != null && position != null && tryWidth != null && tryUnhide != null && minWidth != null);
   }
 
-  final Color color;
   final Widget child;
   final SideBarPosition position;
   final double minWidth;
@@ -106,7 +105,6 @@ class _SideBarState extends State<SideBar> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: children,
       ),
-      color: widget.color,
     );
   }
 }

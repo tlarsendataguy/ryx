@@ -5,7 +5,6 @@ import 'package:ryx_gui/layouter.dart';
 import 'package:ryx_gui/right_bar.dart';
 import 'package:ryx_gui/top_bar.dart';
 import 'package:ryx_gui/web_io.dart';
-import 'package:ryx_gui/formats.dart';
 import 'package:ryx_gui/left_bar.dart';
 import 'package:ryx_gui/sidebar.dart';
 import 'package:ryx_gui/center_content.dart';
@@ -24,7 +23,22 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ryx',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.blue[200],
+        brightness: Brightness.light,
+        buttonColor: Colors.blue[200],
+        cardColor: Colors.grey[50],
+        canvasColor: Colors.grey[200],
+        backgroundColor:Colors.grey[200],
+        dialogBackgroundColor: Colors.grey[200],
+      ),
+      darkTheme: ThemeData(
+        primaryColor: Colors.purple[900],
+        brightness: Brightness.dark,
+        buttonColor: Colors.purple[900],
+        cardColor: Colors.grey[800],
+        canvasColor: Colors.grey[850],
+        backgroundColor: Colors.grey[850],
+        dialogBackgroundColor: Colors.grey[850],
       ),
       home: Material(
         child: PageStructure(
@@ -71,7 +85,6 @@ class _PageStructureState extends State<PageStructure> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Card(
-          color: topBarColor,
           child: widget.topBar,
         ),
         Expanded(
@@ -80,7 +93,6 @@ class _PageStructureState extends State<PageStructure> {
             children: [
               SideBar(
                 child: widget.leftBar,
-                color: cardColor,
                 position: SideBarPosition.Left,
                 tryWidth: layouter.tryLeftWidth,
                 tryUnhide: layouter.unhideLeft,
@@ -90,13 +102,11 @@ class _PageStructureState extends State<PageStructure> {
               Expanded(
                 child: Card(
                   child: widget.content,
-                  color: cardColor,
                 ),
               ),
               SideBar(
                 child: widget.rightBar,
-                color: cardColor,
-                position: SideBarPosition.Right,
+               position: SideBarPosition.Right,
                 tryWidth: layouter.tryRightWidth,
                 tryUnhide: layouter.unhideRight,
                 minWidth: minSidebarWidth,
