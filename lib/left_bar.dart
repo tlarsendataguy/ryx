@@ -10,9 +10,6 @@ import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/choose_folder_dialog.dart';
 
 class LeftBar extends StatelessWidget {
-  final verticalScroll = ScrollController();
-  final horizontalScroll = ScrollController();
-
   Widget build(BuildContext context) {
     final state = BlocProvider.of<AppState>(context);
 
@@ -58,18 +55,12 @@ class LeftBar extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(4),
                       color: Theme.of(context).canvasColor,
-                      child: CupertinoScrollbar(
-                        controller: verticalScroll,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
                         child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: CupertinoScrollbar(
-                            controller: horizontalScroll,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: ProjectExplorer(
-                                structure: snapshot.data,
-                              ),
-                            ),
+                          scrollDirection: Axis.horizontal,
+                          child: ProjectExplorer(
+                            structure: snapshot.data,
                           ),
                         ),
                       ),
