@@ -31,24 +31,24 @@ class LeftBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Center(child: Text("Project:")),
-                  Row(
+                  Wrap(
                     children: <Widget>[
-                      Expanded(child: ChangePathsButton(
-                        child: Text(
-                          "Make relative",
-                          overflow: TextOverflow.ellipsis,
+                      Tooltip(
+                        message: "Convert project to relative paths",
+                        child: ChangePathsButton(
+                          child: Text("Rel"),
+                          busyMessage: "Making macros relative...",
+                          changePathsAction: state.makeAllRelative,
                         ),
-                        busyMessage: "Making macros relative...",
-                        changePathsAction: state.makeAllRelative,
-                      )),
-                      Expanded(child: ChangePathsButton(
-                        child: Text(
-                          "Make absolute",
-                          overflow: TextOverflow.ellipsis,
+                      ),
+                      Tooltip(
+                        message: "Convert project to absolute paths",
+                        child: ChangePathsButton(
+                          child: Text("Abs"),
+                          busyMessage: "Making macros absolute...",
+                          changePathsAction: state.makeAllAbsolute,
                         ),
-                        busyMessage: "Making macros absolute...",
-                        changePathsAction: state.makeAllAbsolute,
-                      )),
+                      ),
                     ],
                   ),
                   Expanded(
@@ -72,45 +72,42 @@ class LeftBar extends StatelessWidget {
                       if (!explorerSnapshot.hasData || !explorerSnapshot.data){
                         return Container();
                       }
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                      return Wrap(
                         children: <Widget>[
-                          Center(child: Text("Selection:")),
-                          RaisedButton(
-                            child: Text("Deselect all"),
-                            onPressed: state.deselectAllExplorer,
+                          Tooltip(
+                            message: "Deselect all",
+                            child: IconButton(
+                              icon: Icon(Icons.check_box_outline_blank),
+                              onPressed: state.deselectAllExplorer,
+                            ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: RaisedButton(
-                                  child: Text("Rename"),
-                                  onPressed: _buildOnRename(context),
-                                ),
-                              ),
-                              Expanded(
-                                child: RaisedButton(
-                                  child: Text("Move"),
-                                  onPressed: _buildOnMove(context),
-                                ),
-                              ),
-                            ],
+                          Tooltip(
+                            message: "Rename selected workflows",
+                            child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: _buildOnRename(context),
+                            ),
                           ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: RaisedButton(
-                                  child: Text("Make relative"),
-                                  onPressed: _buildOnSelectionRelative(context),
-                                ),
-                              ),
-                              Expanded(
-                                child: RaisedButton(
-                                  child: Text("Make absolute"),
-                                  onPressed: _buildOnSelectionAbsolute(context),
-                                ),
-                              ),
-                            ],
+                          Tooltip(
+                            message: "Move selected workflows",
+                            child: IconButton(
+                              icon: Icon(Icons.exit_to_app),
+                              onPressed: _buildOnMove(context),
+                            ),
+                          ),
+                          Tooltip(
+                            message: "Convert selected workflows to relative paths",
+                            child: IconButton(
+                              icon: Text("Rel"),
+                              onPressed: _buildOnSelectionRelative(context),
+                            ),
+                          ),
+                          Tooltip(
+                            message: "Convert selected workflows to absolute paths",
+                            child: IconButton(
+                              icon: Text("Abs"),
+                              onPressed: _buildOnSelectionAbsolute(context),
+                            ),
                           ),
                         ],
                       );

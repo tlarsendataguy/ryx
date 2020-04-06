@@ -12,8 +12,8 @@ class ChangePathsButton extends StatelessWidget{
   final MaterialTapTargetSize materialTapTargetSize;
 
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: child,
+    return IconButton(
+      icon: child,
       onPressed: () async {
         showDialog(
           barrierDismissible: false,
