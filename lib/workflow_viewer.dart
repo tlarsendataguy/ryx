@@ -86,28 +86,6 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
           child: Container(color: Colors.transparent),
         ),
         Positioned(
-          left: 20,
-          top: 20,
-          width: 40,
-          height: 40,
-          child: RaisedButton(
-            padding: EdgeInsets.all(0),
-            child: Icon(Icons.explore),
-            onPressed: () {},
-          ),
-        ),
-        Positioned(
-          left: 65,
-          top: 20,
-          width: 40,
-          height: 40,
-          child: RaisedButton(
-            padding: EdgeInsets.all(0),
-            child: Icon(Icons.edit),
-            onPressed: () {},
-          ),
-        ),
-        Positioned(
           right: 20,
           top: 20,
           width: 25,

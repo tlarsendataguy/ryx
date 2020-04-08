@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ryx_gui/communicator.dart';
 import 'package:ryx_gui/communicator_data.dart';
@@ -155,6 +157,19 @@ main(){
   test("rename folder with invalid returned json", () async {
     var communicator = Communicator(badIo);
     var response = await communicator.renameFolder('Project', 'Path\\To\\Old\\Folder', 'NewFolder');
+    expectParsingDataError(response);
+  });
+
+  test("list macros in project",() async {
+    var communicator = Communicator(validIo);
+    var response = await communicator.listMacrosInProject('project');
+    expect(response.success, isTrue);
+    print(jsonEncode(response.value.map((e)=>e.toJson()).toList()));
+  });
+
+  test("list macros in project with invalid returned json", () async {
+    var communicator = Communicator(badIo);
+    var response = await communicator.listMacrosInProject('Project');
     expectParsingDataError(response);
   });
 }

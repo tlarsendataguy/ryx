@@ -7,12 +7,12 @@ import 'package:ryx_gui/web_io.dart';
 import 'package:ryx_gui/left_bar.dart';
 import 'package:ryx_gui/sidebar.dart';
 import 'package:ryx_gui/center_content.dart';
-//import 'mock_io.dart';
+import 'mock_io.dart';
 
 void main() => runApp(
     BlocProvider<AppState>(
       child: MyApp(),
-      bloc: AppState(WebIo()),
+      bloc: AppState(MockSuccessIo()),
     ),
 );
 

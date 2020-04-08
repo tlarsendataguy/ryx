@@ -30,7 +30,6 @@ class LeftBar extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Center(child: Text("Project:")),
                   Wrap(
                     children: <Widget>[
                       Tooltip(
