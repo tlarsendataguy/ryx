@@ -69,7 +69,7 @@ class _WorkflowCanvasState extends State<WorkflowCanvas>{
           top: workflowY,
           width: size.width,
           height: size.height,
-          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: CustomPaint(painter: WorkflowPainter(widget.workflow, toolData))),
+          child: Transform.scale(alignment: Alignment.topLeft, scale: scale, child: RepaintBoundary(child: CustomPaint(painter: WorkflowPainter(widget.workflow, toolData)))),
         ),
         GestureDetector(
           onPanStart: (details) {

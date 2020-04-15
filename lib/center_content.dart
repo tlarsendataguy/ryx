@@ -8,11 +8,52 @@ class CenterContent extends StatelessWidget {
   Widget build(BuildContext context) {
     var state = BlocProvider.of<AppState>(context);
     return StreamBuilder(
-      stream: state.isLoadingDocument,
+      stream: state.isLoadingProject,
       builder: (context, AsyncSnapshot<bool> snapshot){
         if ((snapshot.hasData && snapshot.data) || !snapshot.hasData){
           return LoadingIndicator();
         }
+
+        return Padding(
+          padding: EdgeInsets.all(4),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 40,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    FlatButton(
+                      child: Text("Macros in project"),
+                      onPressed: (){},
+                    ),
+                    FlatButton(
+                      child: Row(
+                        children: [
+                          Text("Selected workflow"),
+                          Container(width: 8),
+                          InkWell(
+                            child: Icon(Icons.close),
+                            onTap: (){print("close");},
+                          ),
+                        ],
+                      ),
+                      onPressed: (){print("select");},
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: WorkflowViewer(),
+              ),
+            ],
+          ),
+        );
+
+
+
+
+
         return Padding(
           padding: EdgeInsets.all(4),
           child: Column(
