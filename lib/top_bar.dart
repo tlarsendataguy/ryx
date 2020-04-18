@@ -34,21 +34,21 @@ class TopBar extends StatelessWidget {
         ),
         StreamBuilder(
           stream: state.currentProject,
-          builder: (context, AsyncSnapshot<String> snapshot){
-            if (snapshot.hasData && snapshot.data != ''){
+          builder: (context, AsyncSnapshot<Project> snapshot){
+            if (snapshot.hasData && snapshot.data != null){
               return Row(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.fromLTRB(8,0,8,0),
                     child: Center(
                       child: Text(
-                        snapshot.data,
+                        snapshot.data.path,
                       ),
                     ),
                   ),
                   IconButton(
                     icon: Icon(Icons.refresh),
-                    onPressed: () => state.getProjectStructure(snapshot.data),
+                    onPressed: () => state.getProjectStructure(snapshot.data.path),
                   ),
                 ],
               );

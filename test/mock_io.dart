@@ -29,19 +29,15 @@ class MockSuccessIo extends Io {
     return '{"Success":true,"Data":4}';
   }
   Future<String> renameFiles(String project, List<String> from, List<String> to) async {
-    await Future.delayed(Duration(seconds: 2));
     return '{"Success":true,"Data":["File1","File2","File3","File4","File5","File6","File7","File8","File9","File10","File11","File12","File13","File14","File15","File16","File17","File18","File19","File20","File21","File22","File23","File24","File25","File26","File27","File28","File29","File30","File31","File32","File33","File34","File35","File36","File37","File38","File39","File40"]}';
   }
   Future<String> moveFiles(String project, List<String> files, String moveTo) async {
-    await Future.delayed(Duration(seconds: 1));
     return '{"Success":true,"Data":["File1","File2","File3","File4","File5","File6","File7","File8","File9","File10","File11","File12","File13","File14","File15","File16","File17","File18","File19","File20","File21","File22","File23","File24","File25","File26","File27","File28","File29","File30","File31","File32","File33","File34","File35","File36","File37","File38","File39","File40"]}';
   }
   Future<String> renameFolder(String project, String from, String to) async {
-    await Future.delayed(Duration(seconds: 1));
     return '{"Success":true,"Data":null}';
   }
   Future<String> listMacrosInProject(String project) async {
-    await Future.delayed(Duration(seconds: 1));
     return '{"Success":true,"Data":{"Calculate Filter Expression.yxmc":{"FoundPaths":{"C:\\\\Users\\\\tlarsen\\\\Documents\\\\SAP Sets Tutorial\\\\Calculate Filter Expression.yxmc":{"StoredPaths":{"Calculate Filter Expression.yxmc":{"WhereUsed":["C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\01 SETLEAF Equations Completed.yxmd"]}}}}},"MultiInOut.yxmc":{"FoundPaths":{"C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\MultiInOut.yxmc":{"StoredPaths":{"MultiInOut.yxmc":{"WhereUsed":["C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\MultiInOut.yxmd"]}}}}},"Tag with Sets.yxmc":{"FoundPaths":{"C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\macros\\\\Tag with Sets.yxmc":{"StoredPaths":{"macros\\\\Tag with Sets.yxmc":{"WhereUsed":["C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\01 SETLEAF Equations Completed.yxmd"]}}}}}}}';
   }
 }

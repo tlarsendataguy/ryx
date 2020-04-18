@@ -10,13 +10,13 @@ class WorkflowViewer extends StatelessWidget {
   Widget build(BuildContext context) {
     var state = BlocProvider.of<AppState>(context);
     return StreamBuilder(
-      stream: state.documentStructure,
-      builder: (builderContext, AsyncSnapshot<DocumentStructure> snapshot)
+      stream: state.currentDocument,
+      builder: (builderContext, AsyncSnapshot<Document> snapshot)
       {
         if (!snapshot.hasData) {
           return Container();
         }
-        return new WorkflowCanvas(workflow: snapshot.data);
+        return new WorkflowCanvas(workflow: snapshot.data.structure);
       },
     );
   }

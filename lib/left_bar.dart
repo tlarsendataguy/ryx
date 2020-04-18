@@ -6,7 +6,6 @@ import 'package:ryx_gui/dialogs.dart';
 import 'package:ryx_gui/loading_indicator.dart';
 import 'package:ryx_gui/project_explorer.dart';
 import 'package:ryx_gui/app_state.dart';
-import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/choose_folder_dialog.dart';
 
 class LeftBar extends StatelessWidget {
@@ -20,8 +19,8 @@ class LeftBar extends StatelessWidget {
           return LoadingIndicator();
         }
         return StreamBuilder(
-          stream: state.projectStructure,
-          builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+          stream: state.currentProject,
+          builder: (context, AsyncSnapshot<Project> snapshot){
             if (!snapshot.hasData){
               return Container();
             }
@@ -59,7 +58,7 @@ class LeftBar extends StatelessWidget {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: ProjectExplorer(
-                            structure: snapshot.data,
+                            structure: snapshot.data.structure,
                           ),
                         ),
                       ),
@@ -301,12 +300,12 @@ Future<String> _showChooseFolder(BuildContext context) async {
     context: context,
     builder: (context){
       return StreamBuilder(
-        stream: state.projectStructure,
-        builder: (context, AsyncSnapshot<ProjectStructure> snapshot){
+        stream: state.currentProject,
+        builder: (context, AsyncSnapshot<Project> snapshot){
           if (!snapshot.hasData){
             return Container();
           }
-          return ChooseFolderDialog(structure: snapshot.data.copyFolders());
+          return ChooseFolderDialog(structure: snapshot.data.structure.copyFolders());
         },
       );
     },

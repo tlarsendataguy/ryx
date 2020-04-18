@@ -7,6 +7,22 @@ import 'package:ryx_gui/bloc_state.dart';
 import 'package:rxdart/rxdart.dart';
 
 const String loadingNew = "Another doc is loading";
+enum CenterPage{
+  MacrosInProject,
+  SelectedWorkflow,
+}
+
+class Document {
+  Document(this.path, this.structure);
+  final String path;
+  final DocumentStructure structure;
+}
+
+class Project {
+  Project(this.path, this.structure);
+  final String path;
+  final ProjectStructure structure;
+}
 
 class AppState extends BlocState{
   AppState(Io io){
@@ -25,20 +41,23 @@ class AppState extends BlocState{
   var _currentFolder = BehaviorSubject<String>.seeded("");
   Stream<String> get currentFolder => _currentFolder.distinct();
 
-  var _currentProject = BehaviorSubject<String>.seeded("");
-  Stream<String> get currentProject => _currentProject.stream;
+  var _currentProject = BehaviorSubject<Project>.seeded(null);
+  Stream<Project> get currentProject => _currentProject.stream;
 
-  var _projectStructure = BehaviorSubject<ProjectStructure>.seeded(null);
-  Stream<ProjectStructure> get projectStructure => _projectStructure.stream;
+  var _currentProjectMacros = BehaviorSubject<List<MacroNameInfo>>.seeded([]);
+  Stream<List<MacroNameInfo>> get currentProjectMacros => _currentProjectMacros.stream;
 
   var _isLoadingProject = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isLoadingProject => _isLoadingProject.stream;
 
-  var _currentDocument = BehaviorSubject<String>.seeded("");
-  Stream<String> get currentDocument => _currentDocument.stream;
+  var _currentDocument = BehaviorSubject<Document>.seeded(null);
+  Stream<Document> get currentDocument => _currentDocument.stream;
 
   var _whereUsed = BehaviorSubject<List<String>>.seeded([]);
   Stream<List<String>> get whereUsed => _whereUsed.stream;
+
+  var _centerPage = BehaviorSubject<CenterPage>.seeded(CenterPage.MacrosInProject);
+  Stream<CenterPage> get centerPage => _centerPage.stream.distinct();
 
   var _loadingDocumentProcesses = 0;
   bool _incrementDocumentProcesses(){
@@ -73,9 +92,6 @@ class AppState extends BlocState{
   var _isLoadingWhereUsed = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get isLoadingWhereUsed => _isLoadingWhereUsed.stream;
 
-  var _documentStructure = BehaviorSubject<DocumentStructure>.seeded(null);
-  Stream<DocumentStructure> get documentStructure => _documentStructure.stream;
-
   var _hasSelectedExplorer = BehaviorSubject<bool>.seeded(false);
   Stream<bool> get hasSelectedExplorer => _hasSelectedExplorer.distinct();
   var _allDeselected = BehaviorSubject<void>();
@@ -102,25 +118,30 @@ class AppState extends BlocState{
     }
     _toolData.add(toolDataResponse.value);
 
-    var structureResponse = await _communicator.getProjectStructure(project);
+    var getStructure = _communicator.getProjectStructure(project);
+    var getMacros = _communicator.listMacrosInProject(project);
+    var structureResponse = await getStructure;
     if (structureResponse.success){
       structureResponse.value.toggleExpanded();
-      _projectStructure.add(structureResponse.value);
-      _currentProject.add(project);
+      _currentProject.add(Project(project, structureResponse.value));
+    }
+    var macros = await getMacros;
+    if (macros.success){
+      _currentProjectMacros.add(macros.value);
     }
     _isLoadingProject.add(false);
     return structureResponse.error;
   }
 
   Future<String> getDocumentStructure(String document) async {
-    _currentDocument.add("");
+    _currentDocument.add(null);
     _setLoadingDocStructure(true);
     var project = _currentProject.value;
-    if (project == ''){
+    if (project == null){
       _setLoadingDocStructure(false);
       return "no project was open";
     }
-    var error = await _processDoc(project, document);
+    var error = await _processDoc(project.path, document);
     if (error == loadingNew){
       _decrementWhereUsedProcesses();
       return '';
@@ -130,53 +151,59 @@ class AppState extends BlocState{
       _setLoadingDocStructure(false);
       return error;
     }
-    error = await _processWhereUsed(project, document);
+    error = await _processWhereUsed(project.path, document);
     _decrementWhereUsedProcesses();
     return error;
   }
 
   Future<Response<int>> makeSelectionAbsolute() async {
     var project = _currentProject.value;
-    var response = await _communicator.makeFilesAbsolute(project, selectedExplorer.toList());
+    var response = await _communicator.makeFilesAbsolute(project.path, selectedExplorer.toList());
+    await _updateMacrosInProject();
     return response;
   }
 
   Future<Response<int>> makeAllAbsolute() async {
     var project = _currentProject.value;
-    var response = await _communicator.makeAllAbsolute(project);
+    var response = await _communicator.makeAllAbsolute(project.path);
+    await _updateMacrosInProject();
     return response;
   }
 
   Future<Response<int>> makeSelectionRelative() async {
     var project = _currentProject.value;
-    var response = await _communicator.makeFilesRelative(project, selectedExplorer.toList());
+    var response = await _communicator.makeFilesRelative(project.path, selectedExplorer.toList());
+    await _updateMacrosInProject();
     return response;
   }
 
   Future<Response<int>> makeAllRelative() async {
     var project = _currentProject.value;
-    var response = await _communicator.makeAllRelative(project);
+    var response = await _communicator.makeAllRelative(project.path);
+    await _updateMacrosInProject();
     return response;
   }
 
   Future<Response<List<String>>> renameFiles(List<String> oldFiles, List<String> newFiles) async {
     var project = _currentProject.value;
-    var response = await _communicator.renameFiles(project, oldFiles, newFiles);
+    var response = await _communicator.renameFiles(project.path, oldFiles, newFiles);
     if (response.success){
+      var getMacros = _updateMacrosInProject();
       var currentDoc = _currentDocument.value;
       var index = 0;
       for (var file in oldFiles){
-        if (file == currentDoc){
-          _currentDocument.add(newFiles[index]);
+        if (file == currentDoc.path){
+          _currentDocument.add(Document(newFiles[index], currentDoc.structure));
           break;
         }
         index++;
       }
-      var structure = _projectStructure.value;
+      var structure = project.structure;
       structure.renameFiles(oldFiles, newFiles);
       structure.deselectAllDocsRecursive();
       _removeExplorerSelection();
-      _projectStructure.add(structure);
+      _currentProject.add(Project(project.path,  structure));
+      await getMacros;
     }
     return response;
   }
@@ -184,9 +211,10 @@ class AppState extends BlocState{
   Future<Response<List<String>>> moveFiles(String moveTo) async {
     var project = _currentProject.value;
     var files = selectedExplorer.toList();
-    var response = await _communicator.moveFiles(project, files, moveTo);
+    var response = await _communicator.moveFiles(project.path, files, moveTo);
     if (response.success){
-      var structure = _projectStructure.value;
+      var getMacros = _updateMacrosInProject();
+      var structure = project.structure;
       var newFiles = List<String>();
       for (var file in files){
         if (response.value.contains(file)){
@@ -199,26 +227,26 @@ class AppState extends BlocState{
       structure.renameFiles(files, newFiles);
       structure.deselectAllDocsRecursive();
       _removeExplorerSelection();
-      _projectStructure.add(structure);
+      _currentProject.add(Project(project.path, structure));
+      await getMacros;
     }
     return response;
   }
 
   Future<Response<void>> renameFolder(String from, String to) async {
     var project = _currentProject.value;
-    var response = await _communicator.renameFolder(project, from, to);
+    var response = await _communicator.renameFolder(project.path, from, to);
     if (!response.success){
       return response;
     }
-    var newStructure = _projectStructure.value.renameFolder(from, to);
-    if (project == from){
-      _currentProject.add(newStructure.path);
-    }
-    _projectStructure.add(newStructure);
+    var getMacros = _updateMacrosInProject();
+    var newStructure = project.structure.renameFolder(from, to);
+    _currentProject.add(Project(newStructure.path, newStructure));
     var currentDoc = _currentDocument.value;
-    if (currentDoc.startsWith(from)){
+    if (currentDoc != null && currentDoc.path.startsWith(from)){
       _unloadDocument();
     }
+    await getMacros;
     return response;
   }
 
@@ -238,7 +266,7 @@ class AppState extends BlocState{
   }
 
   void deselectAllExplorer(){
-    var project = _projectStructure.value;
+    var project = _currentProject.value.structure;
     if (project != null){
       project.deselectAllDocsRecursive();
     }
@@ -256,6 +284,18 @@ class AppState extends BlocState{
     _markIfSelectedExplorerIsEmpty();
   }
 
+  void showMacrosInProject(){
+    _centerPage.add(CenterPage.MacrosInProject);
+  }
+
+  void showSelectedWorkflow(){
+    _centerPage.add(CenterPage.SelectedWorkflow);
+  }
+
+  void closeDocument(){
+    _unloadDocument();
+  }
+
   void _removeExplorerSelection(){
     selectedExplorer.clear();
     _hasSelectedExplorer.add(false);
@@ -268,12 +308,12 @@ class AppState extends BlocState{
   }
 
   void _unloadDocument(){
-    if (_currentDocument.value == ""){
+    if (_currentDocument.value == null){
       return;
     }
-    _currentDocument.add("");
-    _documentStructure.add(null);
+    _currentDocument.add(null);
     _whereUsed.add([]);
+    _centerPage.add(CenterPage.MacrosInProject);
   }
 
   Future<String> _processDoc(String project, String document) async {
@@ -285,8 +325,8 @@ class AppState extends BlocState{
     if (isLoading){
       return loadingNew;
     }
-    _documentStructure.add(getDoc.value);
-    _currentDocument.add(document);
+    _currentDocument.add(Document(document, getDoc.value));
+    _centerPage.add(CenterPage.SelectedWorkflow);
     return "";
   }
 
@@ -309,6 +349,16 @@ class AppState extends BlocState{
     }
   }
 
+  Future _updateMacrosInProject() async {
+    var project = _currentProject.value;
+    var macros = await _communicator.listMacrosInProject(project.path);
+    if (macros.success){
+      _currentProjectMacros.add(macros.value);
+    } else {
+      _currentProjectMacros.add([]);
+    }
+  }
+
   Future initialize() async {
 
   }
@@ -317,15 +367,15 @@ class AppState extends BlocState{
     _folders.close();
     _currentFolder.close();
     _currentProject.close();
-    _projectStructure.close();
     _isLoadingProject.close();
     _currentDocument.close();
     _whereUsed.close();
     _isLoadingDocument.close();
     _isLoadingWhereUsed.close();
-    _documentStructure.close();
     _toolData.close();
     _hasSelectedExplorer.close();
     _allDeselected.close();
+    _currentProjectMacros.close();
+    _centerPage.close();
   }
 }
