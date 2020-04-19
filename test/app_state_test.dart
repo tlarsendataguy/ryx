@@ -290,5 +290,20 @@ main() {
     await state.getProjectStructure('project');
     await state.getDocumentStructure('document');
     state.closeDocument();
+    state.dispose();
+  });
+
+  test("Batch update macro settings", () async {
+    var state = AppState(MockSuccessIo());
+    expect(state.currentProjectMacros, emitsInOrder([
+      isEmpty,
+      isNotEmpty,
+      isNotEmpty,
+    ]));
+
+    await state.getProjectStructure('project');
+    var error = await state.batchUpdateMacroSettings('macro', 'c:\\macro.yxmc', [], []);
+    expect(error, equals(''));
+    state.dispose();
   });
 }

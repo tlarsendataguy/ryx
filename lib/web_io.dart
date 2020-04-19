@@ -59,7 +59,20 @@ class WebIo extends Io {
   }
 
   Future<String> listMacrosInProject(String project) async {
-    return await _request(function: "ListMacrosInProject");
+    return await _request(function: "ListMacrosInProject", project: project);
+  }
+
+  Future<String> batchUpdateMacroSettings(String project, String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths) async {
+    return await _request(
+      function: 'BatchUpdateMacroSettings',
+      project: project,
+      parameters: {
+        'Name': name,
+        'NewSetting': newSetting,
+        'OnlyFoundPaths': onlyFoundPaths,
+        'OnlyStoredPaths': onlyStoredPaths,
+      },
+    );
   }
 
   Future<String> _request({String function, String project="", Map<String,Object> parameters}) async {

@@ -16,6 +16,7 @@ abstract class Io{
   Future<String> moveFiles(String project, List<String> files, String moveTo);
   Future<String> renameFolder(String project, String from, String to);
   Future<String> listMacrosInProject(String project);
+  Future<String> batchUpdateMacroSettings(String project, String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths);
 }
 
 typedef Future<T> BuildData<T>(dynamic data);
@@ -123,6 +124,13 @@ class Communicator {
     return await _buildResponse(
       request: () async => await _io.listMacrosInProject(project),
       buildData: _buildListMacrosInProjectResponse,
+    );
+  }
+
+  Future<Response<int>> batchUpdateMacroSettings(String project, String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths) async {
+    return await _buildResponse(
+      request: () async => await _io.batchUpdateMacroSettings(project, name, newSetting, onlyFoundPaths, onlyStoredPaths),
+      buildData: _buildIntResponse,
     );
   }
 

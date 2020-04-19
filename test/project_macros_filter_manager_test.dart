@@ -50,6 +50,11 @@ main(){
   test("Select and deselect macro name",(){
     var manager = ProjectMacrosFilterManager(projectMacros);
     expect(manager.selectedMacroName, equals(""));
+    expect(manager.selectedMacroNameStream, emitsInOrder([
+      '',
+      'Macro 1',
+      ''
+    ]));
     expect(manager.macroNames, emitsInOrder([
       ['Macro 1', 'Macro 2'],
       ['Macro 1'],

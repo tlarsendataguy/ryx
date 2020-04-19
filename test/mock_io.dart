@@ -40,6 +40,9 @@ class MockSuccessIo extends Io {
   Future<String> listMacrosInProject(String project) async {
     return '{"Success":true,"Data":{"Calculate Filter Expression.yxmc":{"FoundPaths":{"C:\\\\Users\\\\tlarsen\\\\Documents\\\\SAP Sets Tutorial\\\\Calculate Filter Expression.yxmc":{"StoredPaths":{"Calculate Filter Expression.yxmc":{"WhereUsed":["C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\01 SETLEAF Equations Completed.yxmd"]}}}}},"MultiInOut.yxmc":{"FoundPaths":{"C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\MultiInOut.yxmc":{"StoredPaths":{"MultiInOut.yxmc":{"WhereUsed":["C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\MultiInOut.yxmd"]}}}}},"Tag with Sets.yxmc":{"FoundPaths":{"C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\macros\\\\Tag with Sets.yxmc":{"StoredPaths":{"macros\\\\Tag with Sets.yxmc":{"WhereUsed":["C:\\\\Users\\\\tlarsen\\\\go\\\\src\\\\github.com\\\\tlarsen7572\\\\Golang-Public\\\\ryx\\\\testdocs\\\\01 SETLEAF Equations Completed.yxmd"]}}}}}}}';
   }
+  Future<String> batchUpdateMacroSettings(String project, String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths) async {
+    return '{"Success":true,"Data":1}';
+  }
 }
 
 class MockInvalidIo extends Io {
@@ -58,6 +61,9 @@ class MockInvalidIo extends Io {
   Future<String> moveFiles(String project, List<String> files, String moveTo) async => "blah blah blah";
   Future<String> renameFolder(String project, String from, String to) async => "blah blah blah";
   Future<String> listMacrosInProject(String project) async => "blah blah blah";
+  Future<String> batchUpdateMacroSettings(String project, String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths) async {
+    return "blah blah blah";
+  }
 }
 
 class MockValidProjectInvalidOthers extends Io {
@@ -80,4 +86,7 @@ class MockValidProjectInvalidOthers extends Io {
   Future<String> moveFiles(String project, List<String> files, String moveTo) async => "blah blah blah";
   Future<String> renameFolder(String project, String from, String to) async => "blah blah blah";
   Future<String> listMacrosInProject(String project) async => "blah blah blah";
+  Future<String> batchUpdateMacroSettings(String project, String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths) async {
+    return "blah blah blah";
+  }
 }

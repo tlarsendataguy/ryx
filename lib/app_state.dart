@@ -292,6 +292,17 @@ class AppState extends BlocState{
     _centerPage.add(CenterPage.SelectedWorkflow);
   }
 
+  Future<String> batchUpdateMacroSettings(String name, String newSetting, List<String> onlyFoundPaths, List<String> onlyStoredPaths) async {
+    var project = _currentProject.value.path;
+    var response = await _communicator.batchUpdateMacroSettings(project, name, newSetting, onlyFoundPaths, onlyStoredPaths);
+    if (!response.success) return response.error;
+    var macrosResponse = await _communicator.listMacrosInProject(project);
+    if (macrosResponse.success) {
+      _currentProjectMacros.add(macrosResponse.value);
+    }
+    return macrosResponse.error;
+  }
+
   void closeDocument(){
     _unloadDocument();
   }

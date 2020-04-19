@@ -10,6 +10,7 @@ class ProjectMacrosFilterManager {
     _macroNames = BehaviorSubject.seeded(_gatherMacroNames(projectMacros));
     _foundPaths = BehaviorSubject.seeded(_gatherFoundPaths(projectMacros));
     _storedPaths = BehaviorSubject.seeded(_gatherStoredPaths(projectMacros));
+    _selectedMacroNameStream = BehaviorSubject.seeded('');
   }
 
   final List<MacroNameInfo> projectMacros;
@@ -33,6 +34,9 @@ class ProjectMacrosFilterManager {
   BehaviorSubject<List<String>> _storedPaths;
   Stream<List<String>> get storedPaths => _storedPaths.stream;
 
+  BehaviorSubject<String> _selectedMacroNameStream;
+  Stream<String> get selectedMacroNameStream => _selectedMacroNameStream.stream;
+
   void setMacroNameFilter(String filterExpression) {
     _macroNameFilter = filterExpression;
     var macros = _gatherProjectMacros();
@@ -53,6 +57,7 @@ class ProjectMacrosFilterManager {
 
   void selectMacroName(String name){
     _selectedMacroName = name;
+    _selectedMacroNameStream.add(name);
     _filterAll();
   }
 
@@ -163,5 +168,6 @@ class ProjectMacrosFilterManager {
     _macroNames.close();
     _foundPaths.close();
     _storedPaths.close();
+    _selectedMacroNameStream.close();
   }
 }

@@ -172,6 +172,19 @@ main(){
     var response = await communicator.listMacrosInProject('Project');
     expectParsingDataError(response);
   });
+
+  test("batch update macros",() async {
+    var communicator = Communicator(validIo);
+    var response = await communicator.batchUpdateMacroSettings('project', 'name', 'newSetting', [], []);
+    expect(response.success, isTrue);
+    print(jsonEncode(response.value));
+  });
+
+  test("batch update macros with invalid returned json", () async {
+    var communicator = Communicator(badIo);
+    var response = await communicator.batchUpdateMacroSettings('project', 'name', 'newSetting', [], []);
+    expectParsingDataError(response);
+  });
 }
 
 
