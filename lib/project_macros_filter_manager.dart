@@ -10,16 +10,16 @@ class ProjectMacrosFilterManager {
     _macroNames = BehaviorSubject.seeded(_gatherMacroNames(projectMacros));
     _foundPaths = BehaviorSubject.seeded(_gatherFoundPaths(projectMacros));
     _storedPaths = BehaviorSubject.seeded(_gatherStoredPaths(projectMacros));
-    _selectedMacroNameStream = BehaviorSubject.seeded('');
+    _selectedMacroNameStream = BehaviorSubject.seeded(null);
   }
 
   final List<MacroNameInfo> projectMacros;
   String _macroNameFilter = "";
   String _foundPathsFilter = "";
   String _storedPathsFilter = "";
-  String _selectedMacroName = "";
-  String _selectedFoundPath = "";
-  String _selectedStoredPath = "";
+  String _selectedMacroName;
+  String _selectedFoundPath;
+  String _selectedStoredPath;
 
   String get selectedMacroName => _selectedMacroName;
   String get selectedFoundPath => _selectedFoundPath;
@@ -96,17 +96,17 @@ class ProjectMacrosFilterManager {
   List<MacroNameInfo> _gatherProjectMacros(){
     var macros = List<MacroNameInfo>();
     for (var macro in projectMacros){
-      if (_selectedMacroName != "" && macro.name != _selectedMacroName){
+      if (_selectedMacroName != null && macro.name != _selectedMacroName){
         continue;
       }
       var foundPaths = List<MacroFoundInfo>();
       for (var found in macro.foundPaths) {
-        if (_selectedFoundPath != "" && found.foundPath != _selectedFoundPath) {
+        if (_selectedFoundPath  != null && found.foundPath != _selectedFoundPath) {
           continue;
         }
         var storedPaths = List<MacroStoredInfo>();
         for (var stored in found.storedPaths) {
-          if (_selectedStoredPath != "" && stored.storedPath != _selectedStoredPath) {
+          if (_selectedStoredPath != null && stored.storedPath != _selectedStoredPath) {
             continue;
           }
           storedPaths.add(

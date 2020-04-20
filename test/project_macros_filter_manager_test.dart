@@ -49,11 +49,11 @@ main(){
 
   test("Select and deselect macro name",(){
     var manager = ProjectMacrosFilterManager(projectMacros);
-    expect(manager.selectedMacroName, equals(""));
+    expect(manager.selectedMacroName, isNull);
     expect(manager.selectedMacroNameStream, emitsInOrder([
-      '',
+      null,
       'Macro 1',
-      ''
+      null
     ]));
     expect(manager.macroNames, emitsInOrder([
       ['Macro 1', 'Macro 2'],
@@ -72,14 +72,14 @@ main(){
     ]));
     manager.selectMacroName('Macro 1');
     expect(manager.selectedMacroName, equals("Macro 1"));
-    manager.selectMacroName("");
-    expect(manager.selectedMacroName, equals(""));
+    manager.selectMacroName(null);
+    expect(manager.selectedMacroName, isNull);
     manager.dispose();
   });
 
   test("Select and deselect found paths",(){
     var manager = ProjectMacrosFilterManager(projectMacros);
-    expect(manager.selectedFoundPath, equals(""));
+    expect(manager.selectedFoundPath, isNull);
     expect(manager.macroNames, emitsInOrder([
       ['Macro 1', 'Macro 2'],
       ['Macro 1'],
@@ -97,14 +97,14 @@ main(){
     ]));
     manager.selectFoundPath("c:\\Macro 1.yxmc");
     expect(manager.selectedFoundPath, equals("c:\\Macro 1.yxmc"));
-    manager.selectFoundPath("");
-    expect(manager.selectedFoundPath, equals(""));
+    manager.selectFoundPath(null);
+    expect(manager.selectedFoundPath, isNull);
     manager.dispose();
   });
 
   test("Select and deselect stored paths",(){
     var manager = ProjectMacrosFilterManager(projectMacros);
-    expect(manager.selectedStoredPath, equals(""));
+    expect(manager.selectedStoredPath, isNull);
     expect(manager.macroNames, emitsInOrder([
       ['Macro 1', 'Macro 2'],
       ['Macro 1'],
@@ -122,8 +122,8 @@ main(){
     ]));
     manager.selectStoredPath("Macro 1.yxmc");
     expect(manager.selectedStoredPath, equals("Macro 1.yxmc"));
-    manager.selectStoredPath("");
-    expect(manager.selectedStoredPath, equals(""));
+    manager.selectStoredPath(null);
+    expect(manager.selectedStoredPath, isNull);
     manager.dispose();
   });
 
@@ -138,7 +138,7 @@ main(){
     ]));
     manager.selectMacroName("Macro 1");
     manager.setStoredPathFilter("^[^cC][^:][^\\\\]");
-    manager.selectMacroName("");
+    manager.selectMacroName(null);
     manager.setStoredPathFilter("");
     manager.dispose();
   });
@@ -148,6 +148,18 @@ main(){
     expect(()=>manager.setMacroNameFilter("this is invalid regex: [\\]"), returnsNormally);
     expect(()=>manager.setFoundPathFilter("this is invalid regex: [\\]"), returnsNormally);
     expect(()=>manager.setStoredPathFilter("this is invalid regex: [\\]"), returnsNormally);
+  });
+
+  test("select blank found macro",(){
+    var manager = ProjectMacrosFilterManager(projectMacros);
+    expect(manager.storedPaths, emitsInOrder([
+      ["c:\\folder\\Macro 2.yxmc", "c:\\Macro 1.yxmc", "C:\\Macro 2.yxmc", "folder\\Macro 2.yxmc", "invalid\\folder\\Macro 1.yxmc", "invalid\\folder\\Macro 2.yxmc", "Macro 1.yxmc"],
+      ["invalid\\folder\\Macro 1.yxmc", "invalid\\folder\\Macro 2.yxmc"],
+      ["c:\\folder\\Macro 2.yxmc", "c:\\Macro 1.yxmc", "C:\\Macro 2.yxmc", "folder\\Macro 2.yxmc", "invalid\\folder\\Macro 1.yxmc", "invalid\\folder\\Macro 2.yxmc", "Macro 1.yxmc"],
+    ]));
+    manager.selectFoundPath("");
+    manager.selectFoundPath(null);
+    manager.dispose();
   });
 }
 
