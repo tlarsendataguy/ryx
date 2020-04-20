@@ -5,6 +5,8 @@ import 'package:ryx_gui/app_state.dart';
 import 'package:ryx_gui/bloc_provider.dart';
 import 'package:ryx_gui/communicator_data.dart';
 import 'package:ryx_gui/datafy_nodes.dart';
+import 'package:ryx_gui/dialogs.dart';
+import 'package:ryx_gui/loading_indicator.dart';
 
 class WorkflowViewer extends StatelessWidget {
   Widget build(BuildContext context) {
@@ -16,7 +18,89 @@ class WorkflowViewer extends StatelessWidget {
         if (!snapshot.hasData) {
           return Container();
         }
-        return new WorkflowCanvas(workflow: snapshot.data.structure);
+        return Row(
+          children: [
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(4.0),
+                  child: Column(
+                    children: [
+                      Align(
+                        child: Text(snapshot.data.path),
+                        alignment: Alignment.centerLeft,
+                      ),
+                      Expanded(
+                        child: WorkflowCanvas(workflow: snapshot.data.structure),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              width: 300,
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(4),
+                  child: WhereUsedViewer(),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class WhereUsedViewer extends StatelessWidget {
+  Widget build(BuildContext context) {
+    var state = BlocProvider.of<AppState>(context);
+    return StreamBuilder(
+      stream: state.isLoadingWhereUsed,
+      builder: (context, AsyncSnapshot<bool> snapshot){
+        if (!snapshot.hasData || snapshot.data)
+          return LoadingIndicator();
+
+        return StreamBuilder(
+          stream: state.whereUsed,
+          builder: (context, AsyncSnapshot<List<String>> snapshot){
+            if (!snapshot.hasData) return LoadingIndicator();
+
+            var whereUsed = snapshot.data;
+            return Column(
+              children: <Widget>[
+                Text("Where used:"),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: whereUsed.length,
+                    itemBuilder: (context, index){
+                      return InkWell(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(0, 4, 0, 4),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(whereUsed[index]),
+                          ),
+                        ),
+                        onDoubleTap: () async {
+                          var error = await state.getDocumentStructure(whereUsed[index]);
+                          if (error != ""){
+                            await showDialog(
+                              context: context,
+                              child: ErrorDialog(error),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }

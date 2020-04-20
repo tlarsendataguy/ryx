@@ -12,7 +12,7 @@ import 'mock_io.dart';
 void main() => runApp(
     BlocProvider<AppState>(
       child: MyApp(),
-      bloc: AppState(WebIo()),
+      bloc: AppState(MockSuccessIo()),
     ),
 );
 
