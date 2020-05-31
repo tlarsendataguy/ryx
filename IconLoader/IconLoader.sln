@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconLoaderApp", "IconLoaderApp\IconLoaderApp.csproj", "{AB87DEB6-39A2-4481-82AD-A14573556508}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "IconLoaderCore", "IconLoaderCore\IconLoaderCore.shproj", "{B37D7166-844B-4A6C-B0C9-0DFC46CE56AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconLoaderTests", "IconLoaderTests\IconLoaderTests.csproj", "{17D1A96D-D35F-46AE-B29F-B44E0AE6D694}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB87DEB6-39A2-4481-82AD-A14573556508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB87DEB6-39A2-4481-82AD-A14573556508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB87DEB6-39A2-4481-82AD-A14573556508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB87DEB6-39A2-4481-82AD-A14573556508}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17D1A96D-D35F-46AE-B29F-B44E0AE6D694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17D1A96D-D35F-46AE-B29F-B44E0AE6D694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17D1A96D-D35F-46AE-B29F-B44E0AE6D694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17D1A96D-D35F-46AE-B29F-B44E0AE6D694}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
